@@ -1,0 +1,275 @@
+---
+title: "Error Codes"
+description: "Complete reference of HTTP status codes and error responses"
+---
+
+All Trackyard API errors return a JSON object with an `error` message and a machine-readable `code`.
+
+---
+
+## Error Response Format
+
+```json
+{
+  "error": "Human-readable error message",
+  "code": "machine_readable_code",
+  "details": {}  // Optional: additional context
+}
+```
+
+---
+
+## HTTP Status Codes
+
+### 400 Bad Request
+
+**Cause:** Invalid request parameters or malformed JSON.
+
+**Example:**
+```json
+{
+  "error": "hit_point_seconds requires duration_seconds",
+  "code": "invalid_parameters"
+}
+```
+
+**How to fix:**
+- Check parameter types and required fields
+- Validate JSON syntax
+- Review the [API Reference](/api-reference/search) for correct usage
+
+---
+
+### 401 Unauthorized
+
+**Cause:** Missing, invalid, or expired API key.
+
+**Example:**
+```json
+{
+  "error": "Invalid API key",
+  "code": "unauthorized"
+}
+```
+
+**How to fix:**
+- Check that your API key is correct
+- Ensure you're using the `Authorization: Bearer` header format
+- Verify the key hasn't been revoked at [app.trackyard.com/api-keys](https://app.trackyard.com/api-keys)
+- Generate a new key if needed
+
+---
+
+### 402 Payment Required
+
+**Cause:** Out of credits.
+
+**Example:**
+```json
+{
+  "error": "Out of credits. Please top up or upgrade your plan.",
+  "code": "out_of_credits",
+  "credits_remaining": 0
+}
+```
+
+**How to fix:**
+- Wait for monthly credit reset (1st of each month for free tier)
+- Upgrade your plan at [app.trackyard.com/billing](https://app.trackyard.com/billing)
+- Purchase additional credits (coming soon)
+
+---
+
+### 403 Forbidden
+
+**Cause:** API key is valid but lacks permissions for the requested action.
+
+**Example:**
+```json
+{
+  "error": "This feature requires a paid plan",
+  "code": "insufficient_permissions",
+  "required_tier": "starter"
+}
+```
+
+**How to fix:**
+- Check your account tier with `GET /me`
+- Upgrade your plan if needed
+- Verify you're not accessing admin-only endpoints
+
+---
+
+### 404 Not Found
+
+**Cause:** Requested resource doesn't exist.
+
+**Example:**
+```json
+{
+  "error": "Track not found",
+  "code": "track_not_found",
+  "track_id": "trk_invalid"
+}
+```
+
+**How to fix:**
+- Verify the track ID is correct (from `/search` results)
+- Check for typos
+- The track may have been removed from the catalog
+
+---
+
+### 429 Too Many Requests
+
+**Cause:** Rate limit exceeded.
+
+**Example:**
+```json
+{
+  "error": "Rate limit exceeded",
+  "code": "rate_limit_exceeded",
+  "retry_after": 42
+}
+```
+
+**Response Headers:**
+```http
+Retry-After: 42
+X-RateLimit-Remaining: 0
+```
+
+**How to fix:**
+- Wait `retry_after` seconds before retrying
+- Implement exponential backoff in your code
+- Upgrade to a higher tier for increased rate limits
+- See [Rate Limits & Credits](/getting-started/rate-limits-credits)
+
+---
+
+### 500 Internal Server Error
+
+**Cause:** Server-side error.
+
+**Example:**
+```json
+{
+  "error": "Internal server error",
+  "code": "internal_error",
+  "request_id": "req_abc123"
+}
+```
+
+**How to fix:**
+- Retry the request after a short delay
+- If the problem persists, contact support@trackyard.com with the `request_id`
+
+---
+
+## Error Code Reference
+
+| Code | HTTP Status | Description |
+|------|-------------|-------------|
+| `unauthorized` | 401 | Invalid or missing API key |
+| `out_of_credits` | 402 | Credit balance is zero |
+| `insufficient_permissions` | 403 | Feature requires a paid plan |
+| `track_not_found` | 404 | Track ID doesn't exist |
+| `rate_limit_exceeded` | 429 | Too many requests |
+| `invalid_parameters` | 400 | Malformed request parameters |
+| `internal_error` | 500 | Server-side error |
+
+---
+
+## Handling Errors in Code
+
+<CodeGroup>
+```python Python
+import requests
+import time
+
+def search_with_retry(query, api_key, max_retries=3):
+    url = "https://api.trackyard.com/api/external/v1/search"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    
+    for attempt in range(max_retries):
+        response = requests.post(url, headers=headers, json={"query": query})
+        
+        # Success
+        if response.status_code == 200:
+            return response.json()
+        
+        # Rate limit - wait and retry
+        if response.status_code == 429:
+            retry_after = int(response.headers.get("Retry-After", 60))
+            print(f"Rate limited. Retrying in {retry_after}s...")
+            time.sleep(retry_after)
+            continue
+        
+        # Out of credits - stop immediately
+        if response.status_code == 402:
+            raise Exception("Out of credits. Please upgrade your plan.")
+        
+        # Other errors
+        error = response.json()
+        raise Exception(f"API error: {error.get('error')} (code: {error.get('code')})")
+    
+    raise Exception("Max retries exceeded")
+```
+
+```javascript JavaScript
+async function searchWithRetry(query, apiKey, maxRetries = 3) {
+  const url = "https://api.trackyard.com/api/external/v1/search";
+  const headers = { Authorization: `Bearer ${apiKey}` };
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+    
+    // Success
+    if (response.ok) {
+      return await response.json();
+    }
+    
+    // Rate limit - wait and retry
+    if (response.status === 429) {
+      const retryAfter = parseInt(response.headers.get("Retry-After") || "60");
+      console.log(`Rate limited. Retrying in ${retryAfter}s...`);
+      await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+      continue;
+    }
+    
+    // Out of credits - stop immediately
+    if (response.status === 402) {
+      throw new Error("Out of credits. Please upgrade your plan.");
+    }
+    
+    // Other errors
+    const error = await response.json();
+    throw new Error(`API error: ${error.error} (code: ${error.code})`);
+  }
+  
+  throw new Error("Max retries exceeded");
+}
+```
+</CodeGroup>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Rate Limits & Credits" icon="gauge" href="/getting-started/rate-limits-credits">
+    Learn how to avoid 402 and 429 errors
+  </Card>
+  
+  <Card title="Authentication" icon="key" href="/getting-started/authentication">
+    Fix 401 errors with proper API key management
+  </Card>
+  
+  <Card title="Code Examples" icon="code" href="/api-reference/examples">
+    See error handling in full examples
+  </Card>
+</CardGroup>

@@ -1,0 +1,69 @@
+---
+title: "Product Demos & Unboxing"
+description: "Match the vibe of your product with mood-based filtering"
+icon: "box"
+---
+
+Product demos and unboxing videos need music that matches the product's personality. Trackyard's mood filters let you vibe-match automatically.
+
+---
+
+## Matching Music to Product Type
+
+<Tabs>
+  <Tab title="Tech Products">
+    **Vibe:** Minimal, modern, clean
+    
+    ```json
+    {
+      "query": "minimal electronic music for SaaS demo",
+      "filters": {
+        "moods": ["Minimal", "Modern", "Clean"],
+        "has_vocals": false
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Lifestyle Products">
+    **Vibe:** Upbeat, warm, friendly
+    
+    ```json
+    {
+      "query": "upbeat music for lifestyle product",
+      "filters": {
+        "moods": ["Upbeat", "Warm", "Friendly"],
+        "energy_level": "medium"
+      }
+    }
+    ```
+  </Tab>
+  
+  <Tab title="Luxury Products">
+    **Vibe:** Elegant, sophisticated, ambient
+    
+    ```json
+    {
+      "query": "elegant ambient music for luxury unboxing",
+      "filters": {
+        "moods": ["Elegant", "Sophisticated"],
+        "energy_level": "low"
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Mood Filters" icon="heart" href="/api-reference/parameters">
+    See all available moods
+  </Card>
+  
+  <Card title="Smart Trimming" icon="scissors" href="/core-concepts/smart-clip-trimming">
+    Auto-trim to match demo length
+  </Card>
+</CardGroup>

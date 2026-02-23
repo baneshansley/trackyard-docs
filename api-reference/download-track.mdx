@@ -1,0 +1,330 @@
+---
+title: "POST /download-track"
+description: "Download full tracks or smart-trimmed clips with automatic hit point alignment"
+api: "POST https://api.trackyard.com/api/external/v1/download-track"
+---
+
+Download a licensed track as an MP3 file. Optionally request a smart-trimmed clip with automatic segment selection and hit point alignment.
+
+**Cost:** 1 credit per request
+
+**License:** Perpetual sync license included automatically. No additional step required.
+
+---
+
+## Authentication
+
+All requests require a valid API key in the `Authorization` header:
+
+```http
+Authorization: Bearer your_api_key_here
+```
+
+---
+
+## Request Body
+
+<ParamField path="track_id" type="string" required>
+  The track ID from search results.
+  
+  **Example:** `"trk_abc123"`
+</ParamField>
+
+<ParamField path="duration_seconds" type="number">
+  Clip length in seconds. Omit this field to download the full track.
+  
+  When specified, Trackyard analyzes the waveform and selects the best-sounding segment automatically.
+  
+  **Range:** 10-300 seconds
+  **Recommended minimum:** 10 seconds (shorter clips may lack musical coherence)
+</ParamField>
+
+<ParamField path="hit_point_seconds" type="number">
+  Offset (in seconds) where the musical peak should land. **Requires `duration_seconds`.**
+  
+  The algorithm finds the dominant energy peak in the track and aligns it to this offset.
+  
+  **Use case:** Sync the music's climax to a specific moment in your video (product reveal, logo drop, title card).
+  
+  **Range:** Must be less than `duration_seconds`
+  **Precision:** ±1 second
+</ParamField>
+
+---
+
+## Example Requests
+
+### Download Full Track
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/download-track \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"track_id": "trk_abc123"}' \
+  --output track.mp3
+```
+
+### Download 30-Second Clip (Best Segment Auto-Selected)
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/download-track \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "track_id": "trk_abc123",
+    "duration_seconds": 30
+  }' \
+  --output clip-30s.mp3
+```
+
+### Download 22-Second Clip with Hit Point at 12 Seconds
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/download-track \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "track_id": "trk_abc123",
+    "duration_seconds": 22,
+    "hit_point_seconds": 12
+  }' \
+  --output clip-with-hit.mp3
+```
+
+**What happens:** The music's biggest drop/hit/crescendo lands at exactly 12 seconds, perfect for syncing to a product reveal or logo drop.
+
+---
+
+## Response
+
+**Content-Type:** `audio/mpeg`
+
+**Content-Disposition:** `attachment; filename="track-title.mp3"`
+
+The response body is the raw MP3 audio file. No JSON wrapper.
+
+### Response Headers
+
+```http
+Content-Type: audio/mpeg
+Content-Disposition: attachment; filename="Digital_Sunrise.mp3"
+Content-Length: 3428760
+X-Track-Id: trk_abc123
+X-Track-Duration: 142
+X-Credits-Remaining: 486
+X-RateLimit-Remaining: 7
+```
+
+---
+
+## How Smart Trimming Works
+
+When you specify `duration_seconds`, Trackyard:
+
+<Steps>
+  <Step title="Analyzes the waveform">
+    Scans the entire track for musical phrases, energy peaks, beat alignment, and tonal consistency.
+  </Step>
+  
+  <Step title="Scores possible segments">
+    Every potential clip is scored based on musical coherence, energy distribution, and start/end quality.
+  </Step>
+  
+  <Step title="Selects the best segment">
+    Returns the highest-scoring segment as a clean MP3 with no fade-outs or awkward cuts.
+  </Step>
+</Steps>
+
+### When to Use Smart Trimming
+
+<Tabs>
+  <Tab title="Perfect For">
+    ✅ **Short-form content** — Instagram Reels, TikToks, YouTube Shorts
+    
+    ✅ **Ads** — Social media ads, pre-roll, mid-roll
+    
+    ✅ **Product demos** — SaaS walkthroughs, unboxing videos
+    
+    ✅ **Trailers** — App, game, or film trailers
+    
+    ✅ **Batch processing** — Auto-scoring 100+ videos at scale
+  </Tab>
+  
+  <Tab title="Skip It">
+    ❌ **Long-form content** — Podcasts, full episodes, feature films
+    
+    ❌ **Custom edits** — When you need frame-perfect control
+    
+    ❌ **Looping backgrounds** — Use full track for seamless loops
+  </Tab>
+</Tabs>
+
+---
+
+## Hit Point Alignment
+
+The `hit_point_seconds` parameter choreographs the music's peak to a specific moment in your video.
+
+### Use Cases
+
+<AccordionGroup>
+  <Accordion title="Product Reveal" icon="box">
+    **Scenario:** 15-second Instagram Reel, product appears at 8 seconds
+    
+    **Request:**
+    ```json
+    {
+      "track_id": "trk_xyz789",
+      "duration_seconds": 15,
+      "hit_point_seconds": 8
+    }
+    ```
+    
+    **Result:** Music peaks right when the product enters the frame.
+  </Accordion>
+  
+  <Accordion title="Logo Drop" icon="circle">
+    **Scenario:** 30-second YouTube ad, logo reveals at 22 seconds
+    
+    **Request:**
+    ```json
+    {
+      "track_id": "trk_def456",
+      "duration_seconds": 30,
+      "hit_point_seconds": 22
+    }
+    ```
+    
+    **Result:** Musical peak aligns with the logo for maximum impact.
+  </Accordion>
+  
+  <Accordion title="Title Card" icon="heading">
+    **Scenario:** 45-second app trailer, title card at 35 seconds
+    
+    **Request:**
+    ```json
+    {
+      "track_id": "trk_ghi123",
+      "duration_seconds": 45,
+      "hit_point_seconds": 35
+    }
+    ```
+    
+    **Result:** Music builds throughout, peaks at the title card.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## What's Included in the License
+
+Every download includes a **perpetual sync license** automatically:
+
+<Card title="Perpetual License Rights" icon="file-contract" color="#EC8D28">
+  - ✅ **No expiration** — Use the track forever
+  - ✅ **No renewals** — One-time payment, no recurring fees
+  - ✅ **Multi-platform** — Social media, YouTube, podcasts, websites
+  - ✅ **Worldwide** — No geographic restrictions
+  - ✅ **Unlimited views** — No caps on impressions or plays
+  
+  **What's NOT included:**
+  - ❌ Broadcast (TV/film) — requires upgraded license tier
+  - ❌ Audio resale — can't redistribute as standalone audio
+  - ❌ Sync to offensive/illegal content
+</Card>
+
+See [How Trackyard Works](/core-concepts/how-trackyard-works#licensing-model) for full licensing details.
+
+---
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized">
+  Missing or invalid API key.
+  
+  ```json
+  {
+    "error": "Invalid API key",
+    "code": "unauthorized"
+  }
+  ```
+</ResponseField>
+
+<ResponseField name="402 Payment Required">
+  Out of credits.
+  
+  ```json
+  {
+    "error": "Out of credits",
+    "code": "out_of_credits",
+    "credits_remaining": 0
+  }
+  ```
+</ResponseField>
+
+<ResponseField name="404 Not Found">
+  Track ID doesn't exist.
+  
+  ```json
+  {
+    "error": "Track not found",
+    "code": "track_not_found",
+    "track_id": "trk_invalid"
+  }
+  ```
+</ResponseField>
+
+<ResponseField name="400 Bad Request">
+  Invalid parameters (e.g., `hit_point_seconds` without `duration_seconds`).
+  
+  ```json
+  {
+    "error": "hit_point_seconds requires duration_seconds",
+    "code": "invalid_parameters"
+  }
+  ```
+</ResponseField>
+
+See [Error Codes](/api-reference/error-codes) for full reference.
+
+---
+
+## Tips for Best Results
+
+<Tip>
+  **Preview first:** Use the `preview_url` from search results to audition tracks before downloading
+</Tip>
+
+<Tip>
+  **Choose tracks with clear peaks:** Electronic drops, orchestral crescendos, and hip hop hits work best for hit point alignment
+</Tip>
+
+<Tip>
+  **Test different durations:** If a 30-second clip doesn't sound right, try 28 or 32 seconds for better segment selection
+</Tip>
+
+<Tip>
+  **Align hit points to visual moments:** Product reveals, logo drops, title cards, scene transitions
+</Tip>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Smart Clip Trimming" icon="scissors" href="/core-concepts/smart-clip-trimming">
+    Learn how automatic segment selection works
+  </Card>
+  
+  <Card title="Search API" icon="magnifying-glass" href="/api-reference/search">
+    Find tracks to download
+  </Card>
+  
+  <Card title="Use Cases" icon="lightbulb" href="/use-cases/social-media-ads">
+    See hit point alignment in action
+  </Card>
+  
+  <Card title="Code Examples" icon="code" href="/api-reference/examples">
+    Python and JavaScript examples
+  </Card>
+</CardGroup>

@@ -1,0 +1,293 @@
+---
+title: "Rate Limits & Credits"
+description: "How credits, rate limits, and usage tracking work in the Trackyard API"
+---
+
+Trackyard uses a credit-based system to manage API usage. Every search and download consumes credits, and rate limits prevent abuse while ensuring fair access for all users.
+
+---
+
+## How Credits Work
+
+Every API call that returns data costs **1 credit**:
+
+| Endpoint | Cost |
+|----------|------|
+| `POST /search` | 1 credit |
+| `POST /download-track` | 1 credit |
+| `GET /me` | Free |
+| `GET /usage` | Free |
+
+<Info>
+  **Credits are consumed on successful responses only.** Failed requests (4xx/5xx errors) don't count against your balance.
+</Info>
+
+---
+
+## Credit Tiers
+
+<Tabs>
+  <Tab title="Free">
+    **500 credits/month**
+    
+    - 10 requests/minute
+    - 1,000 requests/day
+    - Natural language search
+    - Smart clip trimming
+    - Basic support (email)
+    
+    **Best for:** Testing, hobby projects, low-volume use cases
+  </Tab>
+  
+  <Tab title="Starter (Coming Soon)">
+    **5,000 credits/month**
+    
+    - 60 requests/minute
+    - 10,000 requests/day
+    - Everything in Free, plus:
+      - AI intent extraction (auto-infer genres, moods, BPM)
+      - Priority support
+    
+    **Best for:** Small production apps, content creators
+  </Tab>
+  
+  <Tab title="Pro (Coming Soon)">
+    **50,000 credits/month**
+    
+    - 300 requests/minute
+    - Unlimited daily requests
+    - Everything in Starter, plus:
+      - Dedicated account manager
+      - Custom rate limits
+      - SLA guarantee
+    
+    **Best for:** Large-scale automation, agencies, platforms
+  </Tab>
+</Tabs>
+
+---
+
+## Rate Limits
+
+Rate limits prevent abuse and ensure fair access. Limits are enforced per API key.
+
+### Default Limits (Free Tier)
+
+- **10 requests per minute**
+- **1,000 requests per day**
+
+When you exceed a rate limit, the API returns a `429 Too Many Requests` response with a `Retry-After` header indicating how long to wait (in seconds).
+
+### Tracking Rate Limits
+
+Every API response includes rate limit headers:
+
+```http
+X-RateLimit-Limit: 10
+X-RateLimit-Remaining: 7
+X-RateLimit-Limit-Daily: 1000
+X-RateLimit-Remaining-Daily: 843
+X-Credits-Remaining: 487
+```
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests per minute |
+| `X-RateLimit-Remaining` | Requests left this minute |
+| `X-RateLimit-Limit-Daily` | Maximum requests per day |
+| `X-RateLimit-Remaining-Daily` | Requests left today |
+| `X-Credits-Remaining` | Credits left this month |
+
+### Handling Rate Limits
+
+<CodeGroup>
+```python Python
+import requests
+import time
+
+def search_with_retry(query, api_key, max_retries=3):
+    url = "https://api.trackyard.com/api/external/v1/search"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    
+    for attempt in range(max_retries):
+        response = requests.post(url, headers=headers, json={"query": query})
+        
+        if response.status_code == 200:
+            return response.json()
+        
+        if response.status_code == 429:
+            retry_after = int(response.headers.get("Retry-After", 60))
+            print(f"Rate limited. Retrying in {retry_after}s...")
+            time.sleep(retry_after)
+            continue
+        
+        response.raise_for_status()
+    
+    raise Exception("Max retries exceeded")
+```
+
+```javascript JavaScript
+async function searchWithRetry(query, apiKey, maxRetries = 3) {
+  const url = "https://api.trackyard.com/api/external/v1/search";
+  const headers = { Authorization: `Bearer ${apiKey}` };
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+    
+    if (response.ok) {
+      return await response.json();
+    }
+    
+    if (response.status === 429) {
+      const retryAfter = parseInt(response.headers.get("Retry-After") || "60");
+      console.log(`Rate limited. Retrying in ${retryAfter}s...`);
+      await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+      continue;
+    }
+    
+    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+  }
+  
+  throw new Error("Max retries exceeded");
+}
+```
+</CodeGroup>
+
+---
+
+## Monitoring Usage
+
+### Check Your Balance
+
+Use the `/me` endpoint to check your current credit balance and tier:
+
+```bash
+curl https://api.trackyard.com/api/external/v1/me \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY"
+```
+
+**Response:**
+
+```json
+{
+  "tier": "free",
+  "credits_remaining": 487,
+  "monthly_allowance": 500,
+  "rate_limit": {
+    "requests_per_minute": 10,
+    "requests_per_day": 1000
+  }
+}
+```
+
+### View Usage History
+
+Use the `/usage` endpoint to see your API call history:
+
+```bash
+curl "https://api.trackyard.com/api/external/v1/usage?limit=50&offset=0" \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY"
+```
+
+**Response:**
+
+```json
+{
+  "usage": [
+    {
+      "timestamp": "2026-02-20T14:22:15Z",
+      "endpoint": "/search",
+      "status_code": 200,
+      "credits_consumed": 1,
+      "response_time_ms": 142
+    },
+    {
+      "timestamp": "2026-02-20T14:20:08Z",
+      "endpoint": "/download-track",
+      "status_code": 200,
+      "credits_consumed": 1,
+      "response_time_ms": 387
+    }
+  ],
+  "total_count": 127,
+  "offset": 0,
+  "limit": 50
+}
+```
+
+---
+
+## Optimizing Credit Usage
+
+<AccordionGroup>
+  <Accordion title="Cache search results" icon="database">
+    If you're searching for the same query repeatedly, cache the results locally to avoid consuming credits unnecessarily.
+    
+    ```python
+    from functools import lru_cache
+    
+    @lru_cache(maxsize=128)
+    def search_cached(query):
+        return search(query)
+    ```
+  </Accordion>
+  
+  <Accordion title="Use filters to narrow results" icon="filter">
+    Instead of downloading 100 tracks to find the right one, use filters to refine your search upfront:
+    
+    ```json
+    {
+      "query": "upbeat music",
+      "filters": {
+        "has_vocals": false,
+        "min_bpm": 120,
+        "max_bpm": 140,
+        "energy_level": "high"
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Batch operations efficiently" icon="layer-group">
+    If you're processing many videos, batch your searches to avoid redundant API calls:
+    
+    1. Collect all unique queries
+    2. Deduplicate
+    3. Search once per unique query
+    4. Reuse results across videos with similar requirements
+  </Accordion>
+  
+  <Accordion title="Stream previews before downloading" icon="headphones">
+    Use the `preview_url` from search results to audition tracks before spending a credit on `/download-track`.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Out of Credits?
+
+When your balance hits zero, the API returns a `402 Payment Required` error.
+
+**Options:**
+
+1. **Wait for monthly reset** — Free tier credits renew on the 1st of each month
+2. **Upgrade your plan** — Get more credits and higher rate limits
+3. **Purchase additional credits** — One-time top-ups (coming soon)
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Quickstart" icon="rocket" href="/getting-started/api-quickstart">
+    Start using the API
+  </Card>
+  
+  <Card title="Search API Reference" icon="magnifying-glass" href="/api-reference/search">
+    Learn about search filters and parameters
+  </Card>
+</CardGroup>

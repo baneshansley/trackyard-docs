@@ -1,0 +1,115 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Trackyard",
+  "description": "Music licensing platform for film, TV, and digital content — curated catalog, instant clearance, AI-powered search",
+  "theme": "mint",
+  "logo": {
+    "light": "/images/logo-dark.svg",
+    "dark": "/images/logo-light.svg",
+    "href": "https://trackyard.com"
+  },
+  "favicon": {
+    "light": "/images/favicon-light.png",
+    "dark": "/images/favicon-dark.png"
+  },
+  "colors": {
+    "primary": "#EC8D28",
+    "light": "#EC8D28",
+    "dark": "#EC8D28"
+  },
+  "fonts": {
+    "heading": {
+      "family": "DM Serif Display"
+    },
+    "body": {
+      "family": "DM Sans"
+    }
+  },
+  "background": {
+    "decoration": "gradient"
+  },
+  "topbarLinks": [
+    {
+      "name": "Trackyard.com",
+      "url": "https://trackyard.com"
+    }
+  ],
+  "topbarCtaButton": {
+    "name": "Get API Key",
+    "url": "https://app.trackyard.com/api-keys"
+  },
+  "tabs": [
+    {
+      "name": "API Reference",
+      "url": "api-reference"
+    }
+  ],
+  "navigation": {
+    "groups": [
+      {
+        "group": "Introduction",
+        "pages": [
+          "index",
+          "getting-started/choose-your-path"
+        ]
+      },
+      {
+        "group": "Getting Started",
+        "pages": [
+          "getting-started/api-quickstart",
+          "getting-started/authentication",
+          "getting-started/rate-limits-credits"
+        ]
+      },
+      {
+        "group": "Core Concepts",
+        "pages": [
+          "core-concepts/how-trackyard-works",
+          "core-concepts/ai-powered-search",
+          "core-concepts/smart-clip-trimming"
+        ]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api-reference/search",
+          "api-reference/download-track",
+          "api-reference/me",
+          "api-reference/usage",
+          "api-reference/parameters",
+          "api-reference/error-codes",
+          "api-reference/examples"
+        ]
+      },
+      {
+        "group": "Use Cases",
+        "pages": [
+          "use-cases/social-media-content-farms",
+          "use-cases/social-media-ads",
+          "use-cases/ai-video-generation",
+          "use-cases/youtube-podcasts",
+          "use-cases/product-demos",
+          "use-cases/real-estate-walkthroughs",
+          "use-cases/corporate-training",
+          "use-cases/app-game-trailers"
+        ]
+      },
+      {
+        "group": "MCP Server",
+        "pages": [
+          "mcp-server/what-is-mcp",
+          "mcp-server/setup-guide",
+          "mcp-server/using-with-ai-agents"
+        ]
+      }
+    ]
+  },
+  "footerSocials": {
+    "website": "https://trackyard.com"
+  },
+  "analytics": {
+    "ga4": {
+      "measurementId": "G-XXXXXXXXXX"
+    }
+  }
+}

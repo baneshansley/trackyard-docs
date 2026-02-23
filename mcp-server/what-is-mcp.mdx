@@ -1,0 +1,157 @@
+---
+title: "What is MCP?"
+description: "Introduction to the Model Context Protocol and how it works with Trackyard"
+---
+
+The **Model Context Protocol (MCP)** is an open standard that lets AI agents like Claude and Cursor access external tools and data sources. Trackyard's MCP server gives AI agents direct access to the music catalog.
+
+---
+
+## How It Works
+
+Instead of calling the Trackyard API manually, you describe what you need in natural language to your AI agent:
+
+**You:** "Find me upbeat music for a 30-second Instagram Reel about travel"
+
+**Claude (via MCP):**
+1. Searches Trackyard's catalog
+2. Presents top results
+3. Downloads the track when you confirm
+4. Trims it to exactly 30 seconds
+
+All in one conversation. Zero code.
+
+---
+
+## Why Use MCP Instead of the REST API?
+
+<Tabs>
+  <Tab title="MCP Server (Conversational)">
+    **Best for:** Non-technical users, quick one-off searches, exploratory workflows
+    
+    **How it works:**
+    - Talk to Claude/Cursor in plain English
+    - The AI calls the Trackyard API for you
+    - You confirm selections and the AI downloads tracks
+    
+    **Example workflow:**
+    ```
+    You: "I need music for a 15-second product video"
+    AI: "What kind of vibe?"
+    You: "Upbeat and modern, no vocals"
+    AI: [searches, presents 3 options]
+    You: "Download the second one"
+    AI: [downloads and saves the file]
+    ```
+  </Tab>
+  
+  <Tab title="REST API (Programmatic)">
+    **Best for:** Automation, pipelines, batch processing, custom integrations
+    
+    **How it works:**
+    - Write code to call Trackyard endpoints
+    - Integrate into your existing workflows
+    - Automate hundreds/thousands of requests
+    
+    **Example workflow:**
+    ```python
+    tracks = search("upbeat music")
+    audio = download(tracks[0]["id"], duration_seconds=15)
+    save("product_video_music.mp3", audio)
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## Supported AI Agents
+
+<CardGroup cols={2}>
+  <Card title="Claude (Desktop)" icon="message">
+    Anthropic's Claude desktop app with MCP support built-in.
+  </Card>
+  
+  <Card title="Cursor" icon="code">
+    AI-powered code editor with MCP integration.
+  </Card>
+  
+  <Card title="OpenClaw" icon="robot">
+    AI assistant platform with native MCP support.
+  </Card>
+  
+  <Card title="Custom Agents" icon="gear">
+    Any agent that implements the MCP standard.
+  </Card>
+</CardGroup>
+
+---
+
+## What You Can Do With MCP
+
+<AccordionGroup>
+  <Accordion title="Search by natural language" icon="magnifying-glass">
+    **Example:**
+    
+    "Find me chill lo-fi music for a coding stream"
+    
+    **What happens:** The AI searches Trackyard, interprets your intent, and presents relevant tracks.
+  </Accordion>
+  
+  <Accordion title="Download with smart trimming" icon="scissors">
+    **Example:**
+    
+    "Download that second track as a 30-second clip"
+    
+    **What happens:** The AI calls `/download-track` with `duration_seconds: 30` and saves the file locally.
+  </Accordion>
+  
+  <Accordion title="Align hit points" icon="bullseye">
+    **Example:**
+    
+    "Trim it to 22 seconds with the big hit at 12 seconds"
+    
+    **What happens:** The AI uses `hit_point_seconds: 12` to align the musical peak.
+  </Accordion>
+  
+  <Accordion title="Batch operations" icon="layer-group">
+    **Example:**
+    
+    "Find 5 different tracks for travel videos and download 15-second clips of each"
+    
+    **What happens:** The AI searches once, then downloads 5 custom clips.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## When to Use MCP vs. API
+
+**Use MCP when:**
+- You want conversational music discovery
+- You're doing one-off searches (not automation)
+- You prefer natural language over code
+- You're using Claude, Cursor, or another MCP-compatible agent
+
+**Use the REST API when:**
+- You're building automation or pipelines
+- You need to process hundreds/thousands of requests
+- You're integrating into your own application
+- You want full programmatic control
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Setup Guide" icon="gear" href="/mcp-server/setup-guide">
+    Install the Trackyard MCP server
+  </Card>
+  
+  <Card title="Using with AI Agents" icon="robot" href="/mcp-server/using-with-ai-agents">
+    Learn how to use Trackyard via MCP
+  </Card>
+  
+  <Card title="API Quickstart" icon="rocket" href="/getting-started/api-quickstart">
+    Or use the REST API directly
+  </Card>
+</CardGroup>

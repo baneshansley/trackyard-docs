@@ -1,0 +1,337 @@
+---
+title: "Code Examples"
+description: "Complete Python and JavaScript examples for common workflows"
+---
+
+Production-ready code examples for integrating Trackyard into your applications.
+
+---
+
+## Python SDK (Unofficial)
+
+Install via pip:
+
+```bash
+pip install requests
+```
+
+### Basic Search and Download
+
+```python
+import requests
+import os
+
+API_KEY = os.environ["TRACKYARD_API_KEY"]
+BASE = "https://api.trackyard.com/api/external/v1"
+HEADERS = {"Authorization": f"Bearer {API_KEY}"}
+
+# 1. Search for tracks
+search_response = requests.post(
+    f"{BASE}/search",
+    headers=HEADERS,
+    json={
+        "query": "upbeat electronic for tech demo",
+        "limit": 5,
+        "filters": {"has_vocals": False}
+    }
+)
+tracks = search_response.json()["tracks"]
+print(f"Found {len(tracks)} tracks")
+
+# 2. Download the top result as a 30-second clip
+track_id = tracks[0]["id"]
+download_response = requests.post(
+    f"{BASE}/download-track",
+    headers=HEADERS,
+    json={
+        "track_id": track_id,
+        "duration_seconds": 30
+    }
+)
+
+# 3. Save to file
+with open("clip-30s.mp3", "wb") as f:
+    f.write(download_response.content)
+
+print(f"Downloaded: {tracks[0]['title']}")
+```
+
+### Batch Processing with Hit Point Alignment
+
+```python
+import requests
+import os
+
+API_KEY = os.environ["TRACKYARD_API_KEY"]
+BASE = "https://api.trackyard.com/api/external/v1"
+HEADERS = {"Authorization": f"Bearer {API_KEY}"}
+
+# Video specifications
+videos = [
+    {"name": "product_reveal.mp4", "duration": 15, "reveal_at": 8},
+    {"name": "logo_drop.mp4", "duration": 30, "logo_at": 22},
+    {"name": "title_card.mp4", "duration": 45, "title_at": 35},
+]
+
+# Search once
+search_response = requests.post(
+    f"{BASE}/search",
+    headers=HEADERS,
+    json={"query": "upbeat music for product video", "limit": 1}
+)
+track_id = search_response.json()["tracks"][0]["id"]
+
+# Download custom clips for each video
+for video in videos:
+    response = requests.post(
+        f"{BASE}/download-track",
+        headers=HEADERS,
+        json={
+            "track_id": track_id,
+            "duration_seconds": video["duration"],
+            "hit_point_seconds": video["reveal_at"] if "reveal_at" in video else video.get("logo_at") or video.get("title_at")
+        }
+    )
+    
+    filename = f"{video['name'].replace('.mp4', '')}_music.mp3"
+    with open(filename, "wb") as f:
+        f.write(response.content)
+    
+    print(f"✓ {filename}")
+```
+
+### Error Handling with Retry Logic
+
+```python
+import requests
+import time
+
+def search_with_retry(query, api_key, max_retries=3):
+    """Search with automatic retry on rate limits"""
+    url = "https://api.trackyard.com/api/external/v1/search"
+    headers = {"Authorization": f"Bearer {api_key}"}
+    
+    for attempt in range(max_retries):
+        response = requests.post(url, headers=headers, json={"query": query})
+        
+        if response.status_code == 200:
+            return response.json()
+        
+        if response.status_code == 429:
+            retry_after = int(response.headers.get("Retry-After", 60))
+            print(f"Rate limited. Retrying in {retry_after}s...")
+            time.sleep(retry_after)
+            continue
+        
+        if response.status_code == 402:
+            raise Exception("Out of credits")
+        
+        response.raise_for_status()
+    
+    raise Exception("Max retries exceeded")
+
+# Usage
+result = search_with_retry("chill lo-fi music", api_key=API_KEY)
+print(f"Found {len(result['tracks'])} tracks")
+```
+
+---
+
+## JavaScript / Node.js
+
+Install fetch (Node.js < 18):
+
+```bash
+npm install node-fetch
+```
+
+### Basic Search and Download
+
+```javascript
+const API_KEY = process.env.TRACKYARD_API_KEY;
+const BASE = "https://api.trackyard.com/api/external/v1";
+const headers = { Authorization: `Bearer ${API_KEY}` };
+
+// 1. Search for tracks
+const searchResponse = await fetch(`${BASE}/search`, {
+  method: "POST",
+  headers: { ...headers, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    query: "upbeat electronic for tech demo",
+    limit: 5,
+    filters: { has_vocals: false },
+  }),
+});
+const { tracks } = await searchResponse.json();
+console.log(`Found ${tracks.length} tracks`);
+
+// 2. Download the top result as a 30-second clip
+const trackId = tracks[0].id;
+const downloadResponse = await fetch(`${BASE}/download-track`, {
+  method: "POST",
+  headers: { ...headers, "Content-Type": "application/json" },
+  body: JSON.stringify({
+    track_id: trackId,
+    duration_seconds: 30,
+  }),
+});
+
+// 3. Save to file
+const fs = require("fs");
+const buffer = await downloadResponse.arrayBuffer();
+fs.writeFileSync("clip-30s.mp3", Buffer.from(buffer));
+
+console.log(`Downloaded: ${tracks[0].title}`);
+```
+
+### Batch Processing Example
+
+```javascript
+const videos = [
+  { name: "product_reveal.mp4", duration: 15, reveal_at: 8 },
+  { name: "logo_drop.mp4", duration: 30, logo_at: 22 },
+  { name: "title_card.mp4", duration: 45, title_at: 35 },
+];
+
+// Search once
+const searchRes = await fetch(`${BASE}/search`, {
+  method: "POST",
+  headers: { ...headers, "Content-Type": "application/json" },
+  body: JSON.stringify({ query: "upbeat music for product video", limit: 1 }),
+});
+const trackId = (await searchRes.json()).tracks[0].id;
+
+// Download custom clips for each video
+for (const video of videos) {
+  const hitPoint = video.reveal_at || video.logo_at || video.title_at;
+  
+  const dlRes = await fetch(`${BASE}/download-track`, {
+    method: "POST",
+    headers: { ...headers, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      track_id: trackId,
+      duration_seconds: video.duration,
+      hit_point_seconds: hitPoint,
+    }),
+  });
+  
+  const buffer = await dlRes.arrayBuffer();
+  const filename = `${video.name.replace(".mp4", "")}_music.mp3`;
+  fs.writeFileSync(filename, Buffer.from(buffer));
+  
+  console.log(`✓ ${filename}`);
+}
+```
+
+### Error Handling with Retry
+
+```javascript
+async function searchWithRetry(query, apiKey, maxRetries = 3) {
+  const url = `${BASE}/search`;
+  const headers = { Authorization: `Bearer ${apiKey}` };
+  
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: { ...headers, "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+    
+    if (response.ok) {
+      return await response.json();
+    }
+    
+    if (response.status === 429) {
+      const retryAfter = parseInt(response.headers.get("Retry-After") || "60");
+      console.log(`Rate limited. Retrying in ${retryAfter}s...`);
+      await new Promise((resolve) => setTimeout(resolve, retryAfter * 1000));
+      continue;
+    }
+    
+    if (response.status === 402) {
+      throw new Error("Out of credits");
+    }
+    
+    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+  }
+  
+  throw new Error("Max retries exceeded");
+}
+
+// Usage
+const result = await searchWithRetry("chill lo-fi music", API_KEY);
+console.log(`Found ${result.tracks.length} tracks`);
+```
+
+---
+
+## cURL Examples
+
+### Search
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/search \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "chill lo-fi for coding stream",
+    "limit": 10,
+    "filters": {
+      "has_vocals": false,
+      "energy_level": "low"
+    }
+  }'
+```
+
+### Download Full Track
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/download-track \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"track_id": "trk_abc123"}' \
+  --output track.mp3
+```
+
+### Download 30s Clip with Hit Point
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/download-track \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "track_id": "trk_abc123",
+    "duration_seconds": 30,
+    "hit_point_seconds": 18
+  }' \
+  --output clip-30s.mp3
+```
+
+### Check Account Status
+
+```bash
+curl https://api.trackyard.com/api/external/v1/me \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY"
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Quickstart" icon="rocket" href="/getting-started/api-quickstart">
+    Step-by-step guide for your first API call
+  </Card>
+  
+  <Card title="Search API" icon="magnifying-glass" href="/api-reference/search">
+    Full `/search` endpoint reference
+  </Card>
+  
+  <Card title="Download API" icon="download" href="/api-reference/download-track">
+    Full `/download-track` endpoint reference
+  </Card>
+  
+  <Card title="Use Cases" icon="lightbulb" href="/use-cases/social-media-content-farms">
+    See these examples in production workflows
+  </Card>
+</CardGroup>

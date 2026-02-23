@@ -1,0 +1,225 @@
+---
+title: "Social Media Content Farms"
+description: "Auto-match music to short-form video at scale with exact clip lengths"
+icon: "mobile"
+---
+
+Content farms produce hundreds or thousands of short-form videos daily for TikTok, Instagram Reels, and YouTube Shorts. Trackyard's smart trimming eliminates manual music editing at scale.
+
+---
+
+## The Challenge
+
+Traditional workflow:
+1. License a track manually
+2. Download the full 3-minute file
+3. Open in an audio editor
+4. Find a good 15-second segment
+5. Export and sync to video
+6. Repeat 500 times
+
+**Problem:** This takes 2-5 minutes per video. At 100 videos/day, that's 3-8 hours of pure audio editing.
+
+---
+
+## The Trackyard Solution
+
+<Steps>
+  <Step title="Define your video specs">
+    Most platforms have standard durations:
+    - Instagram Reels: 15s, 30s, 60s, 90s
+    - TikTok: 15s, 60s, 3min
+    - YouTube Shorts: 15s, 30s, 60s
+  </Step>
+  
+  <Step title="Search once, reuse across videos">
+    Find a track that matches your content style:
+    
+    ```bash
+    curl -X POST https://api.trackyard.com/api/external/v1/search \
+      -H "Authorization: Bearer $API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "query": "upbeat music for travel content",
+        "filters": {"has_vocals": false}
+      }'
+    ```
+  </Step>
+  
+  <Step title="Download custom clips for each video">
+    Request different durations from the same track:
+    
+    ```python
+    # Video A: 15 seconds
+    download("trk_abc123", duration_seconds=15)
+    
+    # Video B: 30 seconds
+    download("trk_abc123", duration_seconds=30)
+    
+    # Video C: 60 seconds
+    download("trk_abc123", duration_seconds=60)
+    ```
+    
+    Each clip is auto-trimmed to the best-sounding segment. No manual editing.
+  </Step>
+</Steps>
+
+---
+
+## Example: Travel Content Farm
+
+**Scenario:** 200 Reels/week about travel destinations
+
+**Old workflow:**
+- 5 minutes per video × 200 = 16.6 hours/week
+- Manual trimming, fades, syncing
+
+**New workflow:**
+
+```python
+import requests
+import os
+
+API_KEY = os.environ["TRACKYARD_API_KEY"]
+BASE = "https://api.trackyard.com/api/external/v1"
+HEADERS = {"Authorization": f"Bearer {API_KEY}"}
+
+# Search once
+search = requests.post(
+    f"{BASE}/search",
+    headers=HEADERS,
+    json={"query": "upbeat travel music", "limit": 1}
+).json()
+
+track_id = search["tracks"][0]["id"]
+
+# Process 200 videos
+videos = [
+    {"id": "paris_15s.mp4", "duration": 15},
+    {"id": "tokyo_30s.mp4", "duration": 30},
+    {"id": "nyc_60s.mp4", "duration": 60},
+    # ... 197 more
+]
+
+for video in videos:
+    # Download custom clip
+    audio = requests.post(
+        f"{BASE}/download-track",
+        headers=HEADERS,
+        json={
+            "track_id": track_id,
+            "duration_seconds": video["duration"]
+        }
+    ).content
+    
+    # Save
+    with open(f"{video['id']}_music.mp3", "wb") as f:
+        f.write(audio)
+
+print("✓ 200 videos scored in ~10 minutes")
+```
+
+**Time saved:** 16 hours → 10 minutes
+
+---
+
+## Key Parameters
+
+<ParamField path="duration_seconds" type="number" required>
+  Exact clip length to match your video duration.
+  
+  **Common values:**
+  - `15` — Instagram/TikTok short
+  - `30` — Standard Reel
+  - `60` — Long-form Reel or Short
+  - `90` — Extended Instagram Reel
+</ParamField>
+
+<ParamField path="query" type="string">
+  Describe your content style for consistent vibe across videos.
+  
+  **Examples:**
+  - `"upbeat music for travel content"`
+  - `"chill lo-fi for cooking videos"`
+  - `"energetic music for fitness content"`
+</ParamField>
+
+---
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Batch similar videos together" icon="layer-group">
+    Group videos by style, then use the same track across each batch for brand consistency.
+  </Accordion>
+  
+  <Accordion title="Cache search results" icon="database">
+    Search once, store the track ID, and reuse it across hundreds of videos to save credits.
+  </Accordion>
+  
+  <Accordion title="Use filters for brand consistency" icon="filter">
+    Add filters to ensure every track matches your brand:
+    
+    ```json
+    {
+      "query": "upbeat music",
+      "filters": {
+        "has_vocals": false,
+        "energy_level": "high",
+        "min_bpm": 120
+      }
+    }
+    ```
+  </Accordion>
+  
+  <Accordion title="Automate the full pipeline" icon="robot">
+    Integrate Trackyard into your video rendering pipeline:
+    
+    1. Render video
+    2. Call `/download-track` with exact duration
+    3. Merge audio + video (ffmpeg)
+    4. Upload to platform
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## ROI Calculation
+
+**Assumptions:**
+- 100 videos/day
+- 5 minutes manual editing per video
+- $25/hour labor cost
+
+**Old workflow:**
+- 100 videos × 5 min = 500 min/day = 8.3 hours/day
+- 8.3 hours × $25 = **$208/day** in labor
+- **$1,040/week** | **$4,160/month**
+
+**Trackyard workflow:**
+- Automated music selection: ~5 minutes total
+- Labor cost: **$2/day** (one search + automation setup)
+
+**Monthly savings:** $4,160 - $60 = **$4,100/month**
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Quickstart" icon="rocket" href="/getting-started/api-quickstart">
+    Get started with your first API call
+  </Card>
+  
+  <Card title="Smart Clip Trimming" icon="scissors" href="/core-concepts/smart-clip-trimming">
+    Learn how automatic segment selection works
+  </Card>
+  
+  <Card title="Code Examples" icon="code" href="/api-reference/examples">
+    See batch processing examples
+  </Card>
+  
+  <Card title="Download API" icon="download" href="/api-reference/download-track">
+    Full endpoint reference
+  </Card>
+</CardGroup>

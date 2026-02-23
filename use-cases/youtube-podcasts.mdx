@@ -1,0 +1,69 @@
+---
+title: "YouTube & Podcasts"
+description: "Non-intrusive background music that never competes with your voice"
+icon: "microphone"
+---
+
+Podcasts and YouTube videos need background music that enhances without distracting. Trackyard's `energy: low` filter finds tracks that stay out of the way.
+
+---
+
+## The Use Case
+
+Background music for:
+- Podcast intros and outros
+- YouTube tutorial voiceovers
+- Talking head videos
+- Interview shows
+- Educational content
+
+**Key requirement:** Music should be present but never compete with dialogue.
+
+---
+
+## The Solution
+
+Search with `energy_level: "low"` to find ambient, non-intrusive tracks:
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/search \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "background music for podcast",
+    "filters": {
+      "energy_level": "low",
+      "has_vocals": false
+    }
+  }'
+```
+
+---
+
+## Best Practices
+
+<Tip>
+  **No vocals:** Vocal tracks compete with spoken dialogue. Always use `"has_vocals": false`
+</Tip>
+
+<Tip>
+  **Low energy:** Use `"energy_level": "low"` to ensure the music stays in the background
+</Tip>
+
+<Tip>
+  **Longer clips:** Podcasts and long-form videos benefit from full tracks or extended clips (2-3 minutes)
+</Tip>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Search API" icon="magnifying-glass" href="/api-reference/search">
+    Learn about energy_level filtering
+  </Card>
+  
+  <Card title="Parameters Guide" icon="sliders" href="/api-reference/parameters">
+    See all available filters
+  </Card>
+</CardGroup>

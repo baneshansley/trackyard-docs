@@ -1,0 +1,263 @@
+---
+title: "Smart Clip Trimming"
+description: "How automatic segment selection and hit point alignment work to match music to your exact needs"
+---
+
+Most platforms force you to trim tracks manually or settle for awkward fade-outs. Trackyard's smart trimming analyzes the waveform and selects the best-sounding segment automatically — no editing required.
+
+---
+
+## The Problem with Manual Trimming
+
+When you need a 30-second clip from a 3-minute track, you face several challenges:
+
+- **Where to start?** Random starting points often land mid-phrase or off-beat
+- **Where to end?** Abrupt endings sound amateurish
+- **How to align peaks?** Getting the big hit to land at the right moment requires manual editing
+- **Time consuming** — Multiply this by 100 videos and it's a full workday
+
+Trackyard solves this with **waveform analysis and intelligent segment selection**.
+
+---
+
+## How It Works
+
+When you request a clip with `duration_seconds`, Trackyard:
+
+<Steps>
+  <Step title="Analyzes the waveform">
+    The algorithm scans the entire track for:
+    
+    - **Musical phrases** — Where melodies start and end
+    - **Energy peaks** — Drops, hits, crescendos
+    - **Beat alignment** — Downbeats and measure boundaries
+    - **Tonal consistency** — Segments with clear harmonic structure
+  </Step>
+  
+  <Step title="Scores possible segments">
+    Every potential clip is scored based on:
+    
+    - **Musical coherence** — Does it feel like a complete idea?
+    - **Energy distribution** — Is there a natural arc (build → peak → resolve)?
+    - **Start/end quality** — Clean entry and exit points
+    - **Hit point placement** — Dominant energy peak location (if specified)
+  </Step>
+  
+  <Step title="Selects the best segment">
+    The highest-scoring segment is extracted and returned as an MP3. No fade-outs, no awkward cuts — just the best-sounding 30 seconds of that track.
+  </Step>
+</Steps>
+
+---
+
+## Usage Examples
+
+### Basic Trimming
+
+**Request a 30-second clip:**
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/download-track \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "track_id": "trk_abc123",
+    "duration_seconds": 30
+  }' \
+  --output clip-30s.mp3
+```
+
+**What you get:**
+- The algorithm finds the best 30-second segment
+- Clean start and end (aligned to musical phrases)
+- No manual editing required
+
+---
+
+## Hit Point Alignment
+
+The killer feature: **choreograph musical peaks to specific offsets**.
+
+### The Use Case
+
+You're editing a product video:
+- The product appears on screen at **12 seconds**
+- You want the music to hit its peak **exactly** when the product appears
+- Traditional music libraries make you do this manually
+
+Trackyard does it automatically.
+
+### How to Use It
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/download-track \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "track_id": "trk_abc123",
+    "duration_seconds": 22,
+    "hit_point_seconds": 12
+  }' \
+  --output clip-with-hit.mp3
+```
+
+**What happens:**
+1. The algorithm finds the **dominant energy peak** in the track (the biggest drop/hit/crescendo)
+2. It selects a 22-second segment where that peak lands at the **12-second mark**
+3. You get a clip perfectly timed to your video edit
+
+### Real-World Examples
+
+<AccordionGroup>
+  <Accordion title="Instagram Reel: Product Reveal" icon="mobile">
+    **Scenario:** 15-second Reel, product appears at 8 seconds
+    
+    **Request:**
+    ```json
+    {
+      "track_id": "trk_xyz789",
+      "duration_seconds": 15,
+      "hit_point_seconds": 8
+    }
+    ```
+    
+    **Result:** Music peaks right when the product enters the frame. Zero manual editing.
+  </Accordion>
+  
+  <Accordion title="YouTube Ad: Logo Drop" icon="video">
+    **Scenario:** 30-second ad, logo reveals at 22 seconds
+    
+    **Request:**
+    ```json
+    {
+      "track_id": "trk_def456",
+      "duration_seconds": 30,
+      "hit_point_seconds": 22
+    }
+    ```
+    
+    **Result:** The musical peak aligns with the logo reveal for maximum impact.
+  </Accordion>
+  
+  <Accordion title="App Trailer: Title Card" icon="mobile-screen">
+    **Scenario:** 45-second trailer, title card at 35 seconds
+    
+    **Request:**
+    ```json
+    {
+      "track_id": "trk_ghi123",
+      "duration_seconds": 45,
+      "hit_point_seconds": 35
+    }
+    ```
+    
+    **Result:** Music builds throughout, then hits the peak right as the title appears.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## When to Use Smart Trimming
+
+<Tabs>
+  <Tab title="Use It">
+    ✅ **Short-form content** — Instagram Reels, TikToks, YouTube Shorts
+    
+    ✅ **Ads** — Pre-roll, mid-roll, social media ads
+    
+    ✅ **Product demos** — SaaS walkthrough videos, unboxing videos
+    
+    ✅ **Trailers** — App, game, or film trailers
+    
+    ✅ **Batch processing** — Auto-scoring 100+ videos with consistent durations
+  </Tab>
+  
+  <Tab title="Skip It">
+    ❌ **Long-form content** — Full episodes, feature films, podcasts (use full track)
+    
+    ❌ **Custom edits** — If you need frame-perfect control, download the full track and edit manually
+    
+    ❌ **Looping background music** — If you want seamless loops, use the full track or a loop-optimized library
+  </Tab>
+</Tabs>
+
+---
+
+## Tips for Best Results
+
+<AccordionGroup>
+  <Accordion title="Choose tracks with clear peaks" icon="chart-line">
+    Tracks with obvious drops, hits, or crescendos work best for hit point alignment.
+    
+    **Good candidates:**
+    - Electronic music with drops
+    - Orchestral music with crescendos
+    - Hip hop with bass hits
+    
+    **Less ideal:**
+    - Ambient/drone (no clear peaks)
+    - Minimalist classical (subtle dynamics)
+  </Accordion>
+  
+  <Accordion title="Align hit points to visual moments" icon="crosshairs">
+    Place the hit point where you want maximum impact:
+    
+    - Product reveals
+    - Logo drops
+    - Title cards
+    - Character entrances
+    - Scene transitions
+  </Accordion>
+  
+  <Accordion title="Test different durations" icon="sliders">
+    If a 30-second clip doesn't sound quite right, try 28 or 32 seconds. Sometimes a slightly different duration gives the algorithm more flexibility to find a better segment.
+  </Accordion>
+  
+  <Accordion title="Preview before downloading" icon="headphones">
+    Use the `preview_url` from search results to audition tracks before spending a credit on `/download-track`.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Limitations
+
+<Warning>
+  **Hit point precision:** The algorithm aligns the peak to within ±1 second of your specified offset. For frame-perfect sync, download the full track and edit manually.
+</Warning>
+
+<Warning>
+  **Minimum duration:** Smart trimming works best for clips 10+ seconds long. Very short clips (< 10s) may not have enough musical content for the algorithm to work effectively.
+</Warning>
+
+---
+
+## API Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `track_id` | string | **Required.** The track ID from search results |
+| `duration_seconds` | number | **Optional.** Clip length in seconds. Omit for full track. |
+| `hit_point_seconds` | number | **Optional.** Offset (in seconds) where the musical peak should land. Requires `duration_seconds`. |
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Download API Reference" icon="download" href="/api-reference/download-track">
+    Full API documentation for `/download-track`
+  </Card>
+  
+  <Card title="Use Cases" icon="lightbulb" href="/use-cases/social-media-ads">
+    See hit point alignment in action
+  </Card>
+  
+  <Card title="API Quickstart" icon="rocket" href="/getting-started/api-quickstart">
+    Try smart trimming yourself
+  </Card>
+  
+  <Card title="Code Examples" icon="code" href="/api-reference/examples">
+    Python and JavaScript examples
+  </Card>
+</CardGroup>

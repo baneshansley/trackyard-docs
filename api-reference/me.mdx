@@ -1,0 +1,154 @@
+---
+title: "GET /me"
+description: "Get API key metadata, credit balance, and rate limits"
+api: "GET https://api.trackyard.com/api/external/v1/me"
+---
+
+Returns metadata about your API key, including tier, credit balance, monthly allowance, and rate limits.
+
+**Cost:** Free (does not consume credits)
+
+---
+
+## Authentication
+
+```http
+Authorization: Bearer your_api_key_here
+```
+
+---
+
+## Example Request
+
+```bash
+curl https://api.trackyard.com/api/external/v1/me \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY"
+```
+
+---
+
+## Response
+
+<ResponseField name="tier" type="string" required>
+  Your account tier.
+  
+  **Options:** `"free"`, `"starter"`, `"pro"`
+</ResponseField>
+
+<ResponseField name="credits_remaining" type="number" required>
+  Current credit balance.
+</ResponseField>
+
+<ResponseField name="monthly_allowance" type="number" required>
+  Total credits allocated per month for your tier.
+</ResponseField>
+
+<ResponseField name="rate_limit" type="object" required>
+  Rate limit configuration for your tier.
+  
+  <Expandable title="Rate Limit Object">
+    <ResponseField name="requests_per_minute" type="number">
+      Maximum requests per minute.
+    </ResponseField>
+    
+    <ResponseField name="requests_per_day" type="number">
+      Maximum requests per day.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="created_at" type="string">
+  ISO 8601 timestamp when the API key was created.
+</ResponseField>
+
+<ResponseField name="last_used_at" type="string">
+  ISO 8601 timestamp of the most recent API call.
+</ResponseField>
+
+---
+
+## Example Response
+
+```json
+{
+  "tier": "free",
+  "credits_remaining": 487,
+  "monthly_allowance": 500,
+  "rate_limit": {
+    "requests_per_minute": 10,
+    "requests_per_day": 1000
+  },
+  "created_at": "2026-01-15T10:30:00Z",
+  "last_used_at": "2026-02-20T14:22:15Z"
+}
+```
+
+---
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Monitor credit balance">
+    Check your remaining credits before running batch operations.
+    
+    ```python
+    response = requests.get(
+        "https://api.trackyard.com/api/external/v1/me",
+        headers={"Authorization": f"Bearer {API_KEY}"}
+    )
+    credits = response.json()["credits_remaining"]
+    
+    if credits < 100:
+        print("Low on credits! Consider upgrading.")
+    ```
+  </Accordion>
+  
+  <Accordion title="Display account info in your app">
+    Show users their tier and credit balance in your application's settings page.
+  </Accordion>
+  
+  <Accordion title="Verify API key validity">
+    Test that an API key is active and not revoked.
+    
+    ```javascript
+    const response = await fetch("https://api.trackyard.com/api/external/v1/me", {
+      headers: { Authorization: `Bearer ${API_KEY}` }
+    });
+    
+    if (response.ok) {
+      console.log("API key is valid");
+    } else {
+      console.error("Invalid or expired API key");
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized">
+  Invalid or missing API key.
+  
+  ```json
+  {
+    "error": "Invalid API key",
+    "code": "unauthorized"
+  }
+  ```
+</ResponseField>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Usage History" icon="clock" href="/api-reference/usage">
+    View detailed usage logs
+  </Card>
+  
+  <Card title="Rate Limits & Credits" icon="gauge" href="/getting-started/rate-limits-credits">
+    Learn how credits and rate limits work
+  </Card>
+</CardGroup>

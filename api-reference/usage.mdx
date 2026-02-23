@@ -1,0 +1,186 @@
+---
+title: "GET /usage"
+description: "View paginated usage history with timestamps, endpoints, and credit consumption"
+api: "GET https://api.trackyard.com/api/external/v1/usage"
+---
+
+Returns a paginated list of your API calls with timestamps, endpoints, status codes, credits consumed, and response times.
+
+**Cost:** Free (does not consume credits)
+
+---
+
+## Authentication
+
+```http
+Authorization: Bearer your_api_key_here
+```
+
+---
+
+## Query Parameters
+
+<ParamField query="limit" type="number" default={50}>
+  Number of records to return per page.
+  
+  **Range:** 1-100
+</ParamField>
+
+<ParamField query="offset" type="number" default={0}>
+  Pagination offset.
+</ParamField>
+
+---
+
+## Example Request
+
+```bash
+curl "https://api.trackyard.com/api/external/v1/usage?limit=50&offset=0" \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY"
+```
+
+---
+
+## Response
+
+<ResponseField name="usage" type="array" required>
+  Array of usage records.
+  
+  <Expandable title="Usage Record">
+    <ResponseField name="timestamp" type="string">
+      ISO 8601 timestamp of the request.
+    </ResponseField>
+    
+    <ResponseField name="endpoint" type="string">
+      API endpoint called (e.g., "/search", "/download-track").
+    </ResponseField>
+    
+    <ResponseField name="status_code" type="number">
+      HTTP status code returned.
+    </ResponseField>
+    
+    <ResponseField name="credits_consumed" type="number">
+      Credits consumed by this request (0 for free endpoints like /me and /usage).
+    </ResponseField>
+    
+    <ResponseField name="response_time_ms" type="number">
+      Request processing time in milliseconds.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="total_count" type="number" required>
+  Total number of usage records available.
+</ResponseField>
+
+<ResponseField name="offset" type="number" required>
+  Current pagination offset.
+</ResponseField>
+
+<ResponseField name="limit" type="number" required>
+  Number of records returned in this response.
+</ResponseField>
+
+---
+
+## Example Response
+
+```json
+{
+  "usage": [
+    {
+      "timestamp": "2026-02-20T14:22:15Z",
+      "endpoint": "/search",
+      "status_code": 200,
+      "credits_consumed": 1,
+      "response_time_ms": 142
+    },
+    {
+      "timestamp": "2026-02-20T14:20:08Z",
+      "endpoint": "/download-track",
+      "status_code": 200,
+      "credits_consumed": 1,
+      "response_time_ms": 387
+    },
+    {
+      "timestamp": "2026-02-20T14:18:32Z",
+      "endpoint": "/me",
+      "status_code": 200,
+      "credits_consumed": 0,
+      "response_time_ms": 28
+    }
+  ],
+  "total_count": 127,
+  "offset": 0,
+  "limit": 50
+}
+```
+
+---
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Audit API usage">
+    Track which endpoints are being called and when.
+  </Accordion>
+  
+  <Accordion title="Debug issues">
+    Check status codes and response times to identify failures.
+  </Accordion>
+  
+  <Accordion title="Monitor credit consumption">
+    See which operations are consuming the most credits.
+  </Accordion>
+  
+  <Accordion title="Build usage dashboards">
+    Integrate usage data into your internal analytics.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Pagination Example
+
+```python
+import requests
+
+API_KEY = "your_api_key_here"
+BASE = "https://api.trackyard.com/api/external/v1"
+headers = {"Authorization": f"Bearer {API_KEY}"}
+
+# Fetch all usage records
+all_records = []
+offset = 0
+limit = 100
+
+while True:
+    response = requests.get(
+        f"{BASE}/usage?limit={limit}&offset={offset}",
+        headers=headers
+    )
+    data = response.json()
+    
+    all_records.extend(data["usage"])
+    
+    if len(data["usage"]) < limit:
+        break  # No more records
+    
+    offset += limit
+
+print(f"Total records fetched: {len(all_records)}")
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Account Metadata" icon="user" href="/api-reference/me">
+    Get tier, credits, and rate limits
+  </Card>
+  
+  <Card title="Rate Limits" icon="gauge" href="/getting-started/rate-limits-credits">
+    Understand credit consumption
+  </Card>
+</CardGroup>

@@ -1,0 +1,311 @@
+---
+title: "POST /search"
+description: "Natural language music search with AI-powered intent extraction"
+api: "POST https://api.trackyard.com/api/external/v1/search"
+---
+
+Search the Trackyard catalog using natural language queries. Describe what you need in plain English, and the AI infers genre, mood, BPM, instrumentation, and more.
+
+**Cost:** 1 credit per request
+
+---
+
+## Authentication
+
+All requests require a valid API key in the `Authorization` header:
+
+```http
+Authorization: Bearer your_api_key_here
+```
+
+---
+
+## Request Body
+
+<ParamField path="query" type="string" required>
+  Natural language description of the music you need.
+  
+  **Examples:**
+  - `"upbeat electronic music for a tech startup video"`
+  - `"moody piano for a rainy scene"`
+  - `"15-second clip for an Instagram Reel about travel"`
+</ParamField>
+
+<ParamField path="limit" type="number" default={20}>
+  Maximum number of results to return.
+  
+  **Range:** 1-100
+</ParamField>
+
+<ParamField path="offset" type="number" default={0}>
+  Pagination offset. Use with `limit` to paginate through results.
+</ParamField>
+
+<ParamField path="filters" type="object">
+  Optional structured filters to refine results.
+  
+  <Expandable title="Filter Options">
+    <ParamField path="genres" type="array">
+      Filter by genres. Array of strings.
+      
+      **Example:** `["Electronic", "Pop"]`
+    </ParamField>
+    
+    <ParamField path="moods" type="array">
+      Filter by moods. Array of strings.
+      
+      **Example:** `["Upbeat", "Energetic"]`
+    </ParamField>
+    
+    <ParamField path="has_vocals" type="boolean">
+      Filter by vocal presence.
+      
+      - `true`: Only tracks with vocals
+      - `false`: Instrumental only
+    </ParamField>
+    
+    <ParamField path="min_bpm" type="number">
+      Minimum BPM (beats per minute).
+      
+      **Range:** 40-200
+    </ParamField>
+    
+    <ParamField path="max_bpm" type="number">
+      Maximum BPM (beats per minute).
+      
+      **Range:** 40-200
+    </ParamField>
+    
+    <ParamField path="energy_level" type="string">
+      Energy level filter.
+      
+      **Options:** `"low"`, `"medium"`, `"high"`
+    </ParamField>
+    
+    <ParamField path="instruments" type="array">
+      Filter by instruments. Array of strings.
+      
+      **Example:** `["Piano", "Guitar", "Drums"]`
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+---
+
+## Example Request
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/search \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "upbeat electronic music for tech startup video",
+    "limit": 5,
+    "filters": {
+      "has_vocals": false,
+      "min_bpm": 120,
+      "max_bpm": 140
+    }
+  }'
+```
+
+---
+
+## Response
+
+<ResponseField name="tracks" type="array" required>
+  Array of track objects matching your query.
+  
+  <Expandable title="Track Object">
+    <ResponseField name="id" type="string" required>
+      Unique track identifier. Use this with `/download-track`.
+    </ResponseField>
+    
+    <ResponseField name="title" type="string" required>
+      Track title.
+    </ResponseField>
+    
+    <ResponseField name="artist" type="string" required>
+      Artist or producer name.
+    </ResponseField>
+    
+    <ResponseField name="duration_seconds" type="number" required>
+      Track length in seconds.
+    </ResponseField>
+    
+    <ResponseField name="bpm" type="number">
+      Beats per minute.
+    </ResponseField>
+    
+    <ResponseField name="key" type="string">
+      Musical key (e.g., "C Major", "A Minor").
+    </ResponseField>
+    
+    <ResponseField name="genres" type="array">
+      Array of genre tags.
+    </ResponseField>
+    
+    <ResponseField name="moods" type="array">
+      Array of mood tags.
+    </ResponseField>
+    
+    <ResponseField name="has_vocals" type="boolean">
+      Whether the track contains vocals.
+    </ResponseField>
+    
+    <ResponseField name="energy_level" type="string">
+      Energy level: "low", "medium", or "high".
+    </ResponseField>
+    
+    <ResponseField name="instruments" type="array">
+      Array of primary instruments.
+    </ResponseField>
+    
+    <ResponseField name="preview_url" type="string">
+      URL to a 30-second preview MP3. Free to stream.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="credits_remaining" type="number" required>
+  Your remaining credit balance after this request.
+</ResponseField>
+
+---
+
+## Example Response
+
+```json
+{
+  "tracks": [
+    {
+      "id": "trk_abc123",
+      "title": "Digital Sunrise",
+      "artist": "Sync Lab",
+      "duration_seconds": 142,
+      "bpm": 128,
+      "key": "C Major",
+      "genres": ["Electronic", "Corporate"],
+      "moods": ["Upbeat", "Energetic", "Modern"],
+      "has_vocals": false,
+      "energy_level": "high",
+      "instruments": ["Synth", "Electronic Drums", "Bass"],
+      "preview_url": "https://cdn.trackyard.com/previews/trk_abc123.mp3"
+    },
+    {
+      "id": "trk_def456",
+      "title": "Innovation Drive",
+      "artist": "The Production House",
+      "duration_seconds": 156,
+      "bpm": 132,
+      "key": "D Major",
+      "genres": ["Electronic", "Pop"],
+      "moods": ["Upbeat", "Motivational", "Tech"],
+      "has_vocals": false,
+      "energy_level": "high",
+      "instruments": ["Synth", "Piano", "Drums"],
+      "preview_url": "https://cdn.trackyard.com/previews/trk_def456.mp3"
+    }
+  ],
+  "credits_remaining": 487
+}
+```
+
+---
+
+## Rate Limits
+
+All responses include rate limit headers:
+
+```http
+X-RateLimit-Limit: 10
+X-RateLimit-Remaining: 7
+X-RateLimit-Limit-Daily: 1000
+X-RateLimit-Remaining-Daily: 843
+X-Credits-Remaining: 487
+```
+
+See [Rate Limits & Credits](/getting-started/rate-limits-credits) for details.
+
+---
+
+## Error Responses
+
+<ResponseField name="401 Unauthorized">
+  Missing or invalid API key.
+  
+  ```json
+  {
+    "error": "Invalid API key",
+    "code": "unauthorized"
+  }
+  ```
+</ResponseField>
+
+<ResponseField name="402 Payment Required">
+  Out of credits.
+  
+  ```json
+  {
+    "error": "Out of credits. Please top up or upgrade your plan.",
+    "code": "out_of_credits",
+    "credits_remaining": 0
+  }
+  ```
+</ResponseField>
+
+<ResponseField name="429 Too Many Requests">
+  Rate limit exceeded.
+  
+  ```json
+  {
+    "error": "Rate limit exceeded",
+    "code": "rate_limit_exceeded",
+    "retry_after": 42
+  }
+  ```
+</ResponseField>
+
+See [Error Codes](/api-reference/error-codes) for full reference.
+
+---
+
+## Tips for Better Results
+
+<Tip>
+  **Be specific:** "upbeat electronic music for a tech startup video" beats "upbeat music"
+</Tip>
+
+<Tip>
+  **Include context:** Describe the scene, use case, or platform (Instagram Reel, podcast intro, etc.)
+</Tip>
+
+<Tip>
+  **Combine AI + filters:** Let the AI interpret your query, then add filters for surgical precision
+</Tip>
+
+<Tip>
+  **Preview before downloading:** Stream the `preview_url` to audition tracks before spending a credit on `/download-track`
+</Tip>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Download Track" icon="download" href="/api-reference/download-track">
+    Download full tracks or smart-trimmed clips
+  </Card>
+  
+  <Card title="Parameters Guide" icon="sliders" href="/api-reference/parameters">
+    Full reference of all search filters
+  </Card>
+  
+  <Card title="AI-Powered Search" icon="sparkles" href="/core-concepts/ai-powered-search">
+    Learn how natural language search works
+  </Card>
+  
+  <Card title="Code Examples" icon="code" href="/api-reference/examples">
+    Python and JavaScript examples
+  </Card>
+</CardGroup>

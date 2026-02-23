@@ -1,0 +1,256 @@
+---
+title: "AI-Powered Search"
+description: "How natural language search and intent extraction work to find the right track faster"
+---
+
+Trackyard's search engine understands context, not just keywords. Describe what you need in plain English, and the AI infers genre, mood, BPM, instrumentation, and more.
+
+---
+
+## How It Works
+
+Traditional music search requires you to know exactly what filters to use. Trackyard's AI interprets your intent and translates it into structured queries behind the scenes.
+
+### Example: Traditional vs. AI-Powered Search
+
+<Tabs>
+  <Tab title="Traditional Search (Keyword Matching)">
+    **Query:** "happy upbeat music"
+    
+    **What happens:**
+    - Searches for tracks tagged with "happy" or "upbeat"
+    - Returns thousands of results
+    - No understanding of context or use case
+    - You spend 20 minutes filtering by BPM, genre, vocals, etc.
+    
+    **Result:** Overwhelming, time-consuming, often misses the right track.
+  </Tab>
+  
+  <Tab title="Trackyard AI Search">
+    **Query:** "upbeat electronic music for a tech startup promo video"
+    
+    **What happens:**
+    - AI infers:
+      - **Genre:** Electronic, possibly house/synthwave
+      - **Mood:** Upbeat, energetic, modern
+      - **BPM:** 120-140 (fast enough for energy, not frantic)
+      - **Instrumentation:** Synths, electronic drums, minimal/no vocals
+      - **Energy level:** High
+    - Returns 5-10 highly relevant tracks ranked by fit
+    
+    **Result:** Exactly what you need, instantly.
+  </Tab>
+</Tabs>
+
+---
+
+## Natural Language Understanding
+
+The AI search engine understands:
+
+<AccordionGroup>
+  <Accordion title="Context & Scene Descriptions" icon="film">
+    **Examples:**
+    - "moody piano for a rainy scene"
+    - "chill lo-fi for a coffee shop vlog"
+    - "dramatic orchestral for a movie trailer"
+    
+    **What the AI infers:**
+    - Instrumentation (piano, lo-fi beats, orchestra)
+    - Mood (moody, chill, dramatic)
+    - Energy level (low, medium, high)
+    - Genre (classical, hip hop, cinematic)
+  </Accordion>
+  
+  <Accordion title="Use Case Specificity" icon="bullseye">
+    **Examples:**
+    - "background music for a real estate walkthrough"
+    - "15-second clip for an Instagram Reel"
+    - "podcast intro music"
+    
+    **What the AI infers:**
+    - Duration requirements (15 seconds, ~1 minute, ~30 seconds)
+    - Energy level (low/ambient for real estate, higher for reels)
+    - Vocal preference (instrumental for background, vocal hooks for intros)
+    - Mood (spacious, upbeat, professional)
+  </Accordion>
+  
+  <Accordion title="Technical Preferences" icon="sliders">
+    **Examples:**
+    - "fast-paced electronic without vocals"
+    - "slow acoustic guitar in D minor"
+    - "130 BPM trap beat"
+    
+    **What the AI infers:**
+    - BPM (fast = 140+, slow = 60-90, specific = 130)
+    - Vocal presence (without vocals = instrumental only)
+    - Key signature (D minor)
+    - Genre (electronic, acoustic, trap)
+  </Accordion>
+  
+  <Accordion title="Vibe & Emotion" icon="heart">
+    **Examples:**
+    - "something warm and nostalgic"
+    - "tense and suspenseful"
+    - "bright and optimistic"
+    
+    **What the AI infers:**
+    - Mood tags (warm, nostalgic, tense, suspenseful, bright, optimistic)
+    - Instrumentation (warm = acoustic/analog, tense = strings/bass)
+    - Energy level (suspenseful = mid-high, optimistic = high)
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## How to Write Effective Queries
+
+<Steps>
+  <Step title="Be specific about the use case">
+    ✅ **Good:** "upbeat music for a tech product demo"
+    
+    ❌ **Bad:** "upbeat music"
+    
+    **Why it matters:** Context helps the AI infer mood, energy, and instrumentation.
+  </Step>
+  
+  <Step title="Include mood or vibe descriptors">
+    ✅ **Good:** "moody lo-fi piano for a rainy scene"
+    
+    ❌ **Bad:** "lofi piano"
+    
+    **Why it matters:** Mood descriptors help the AI understand emotional tone and tempo.
+  </Step>
+  
+  <Step title="Specify technical requirements if needed">
+    ✅ **Good:** "130 BPM trap beat without vocals"
+    
+    ❌ **Bad:** "trap beat"
+    
+    **Why it matters:** If you have specific technical needs (BPM, key, vocals), include them upfront.
+  </Step>
+  
+  <Step title="Use reference tracks or scenes">
+    ✅ **Good:** "something like the music in that Apple commercial"
+    
+    ✅ **Good:** "similar to Tycho but more upbeat"
+    
+    **Why it matters:** References give the AI a starting point for instrumentation and production style.
+  </Step>
+</Steps>
+
+---
+
+## Combining AI Search with Filters
+
+For maximum precision, combine natural language queries with structured filters:
+
+```json
+{
+  "query": "upbeat music for a tech startup video",
+  "filters": {
+    "has_vocals": false,
+    "min_bpm": 120,
+    "max_bpm": 140,
+    "energy_level": "high",
+    "genres": ["Electronic", "Pop"]
+  }
+}
+```
+
+The AI interprets the query, then applies the filters on top for surgical precision.
+
+---
+
+## What the AI Can't Do (Yet)
+
+<Warning>
+  **Reference track uploads:** Future feature. Currently, you can describe a reference track in text ("something like Tycho"), but you can't upload an audio file for similarity matching.
+</Warning>
+
+<Warning>
+  **Emotion detection from video:** The AI doesn't analyze video content directly. Describe the scene or emotion in your query instead.
+</Warning>
+
+---
+
+## Search Tips & Examples
+
+<AccordionGroup>
+  <Accordion title="For social media content">
+    **Query:** "15-second upbeat clip for an Instagram Reel about travel"
+    
+    **Why it works:** Duration + vibe + use case gives the AI everything it needs.
+  </Accordion>
+  
+  <Accordion title="For YouTube videos">
+    **Query:** "chill lo-fi background music for a coding tutorial"
+    
+    **Why it works:** "Background music" signals low energy + instrumental. "Coding tutorial" reinforces focus/productivity vibe.
+  </Accordion>
+  
+  <Accordion title="For podcasts">
+    **Query:** "short upbeat intro music for a business podcast, 20-30 seconds"
+    
+    **Why it works:** Duration + energy level + genre context (business = professional, clean).
+  </Accordion>
+  
+  <Accordion title="For product demos">
+    **Query:** "minimal electronic music for a SaaS product demo, modern and clean"
+    
+    **Why it works:** "Minimal" + "modern and clean" infers instrumentation (synths, sparse drums, no vocals).
+  </Accordion>
+  
+  <Accordion title="For film/TV scenes">
+    **Query:** "tense orchestral music for a chase scene, building intensity"
+    
+    **Why it works:** Mood (tense) + genre (orchestral) + scene type (chase) + dynamic (building).
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Advanced Features (Paid Plans)
+
+### Intent Extraction
+
+On paid plans, the AI automatically extracts structured intent from your query and displays it:
+
+**Query:** "moody piano for a rainy scene"
+
+**Extracted Intent:**
+```json
+{
+  "genres": ["Classical", "Ambient"],
+  "moods": ["Moody", "Melancholic", "Atmospheric"],
+  "instruments": ["Piano"],
+  "energy_level": "low",
+  "min_bpm": 60,
+  "max_bpm": 90,
+  "has_vocals": false
+}
+```
+
+You can edit the extracted intent on the fly to fine-tune results.
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Smart Clip Trimming" icon="scissors" href="/core-concepts/smart-clip-trimming">
+    Learn how automatic segment selection works
+  </Card>
+  
+  <Card title="Search API Reference" icon="magnifying-glass" href="/api-reference/search">
+    See all available search parameters
+  </Card>
+  
+  <Card title="API Quickstart" icon="rocket" href="/getting-started/api-quickstart">
+    Try your first search
+  </Card>
+  
+  <Card title="Use Cases" icon="lightbulb" href="/use-cases/social-media-content-farms">
+    See AI search in action
+  </Card>
+</CardGroup>

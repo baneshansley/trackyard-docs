@@ -1,0 +1,178 @@
+---
+title: "MCP Server Setup"
+description: "Install and configure the Trackyard MCP server for Claude, Cursor, and other AI agents"
+---
+
+The Trackyard MCP server lets AI agents search and download music conversationally. This guide walks through setup for Claude Desktop, Cursor, and OpenClaw.
+
+---
+
+## Prerequisites
+
+- A Trackyard account with an API key ([get one here](https://app.trackyard.com/api-keys))
+- An MCP-compatible AI agent (Claude Desktop, Cursor, or OpenClaw)
+- Node.js v18+ (for some installations)
+
+---
+
+## Installation
+
+### Option 1: NPX (Recommended)
+
+No installation required — the MCP server runs on-demand:
+
+```bash
+npx @trackyard/mcp-server
+```
+
+### Option 2: Global Install
+
+Install once, use everywhere:
+
+```bash
+npm install -g @trackyard/mcp-server
+trackyard-mcp
+```
+
+---
+
+## Configuration
+
+### Claude Desktop
+
+<Steps>
+  <Step title="Open Claude Desktop MCP settings">
+    - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+    - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
+  </Step>
+  
+  <Step title="Add Trackyard MCP server">
+    ```json
+    {
+      "mcpServers": {
+        "trackyard": {
+          "command": "npx",
+          "args": ["@trackyard/mcp-server"],
+          "env": {
+            "TRACKYARD_API_KEY": "your_api_key_here"
+          }
+        }
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Restart Claude Desktop">
+    The Trackyard MCP server will be available in your next conversation.
+  </Step>
+</Steps>
+
+### Cursor
+
+<Steps>
+  <Step title="Open Cursor settings">
+    Settings → Extensions → MCP Servers
+  </Step>
+  
+  <Step title="Add Trackyard">
+    ```json
+    {
+      "trackyard": {
+        "command": "npx",
+        "args": ["@trackyard/mcp-server"],
+        "env": {
+          "TRACKYARD_API_KEY": "your_api_key_here"
+        }
+      }
+    }
+    ```
+  </Step>
+  
+  <Step title="Reload Cursor">
+    The server will be active in your next AI conversation.
+  </Step>
+</Steps>
+
+### OpenClaw
+
+<Steps>
+  <Step title="Install the Trackyard skill">
+    ```bash
+    npx skills add https://trackyard.com/openclaw-skill
+    ```
+  </Step>
+  
+  <Step title="Set your API key">
+    ```bash
+    export TRACKYARD_API_KEY="your_api_key_here"
+    ```
+  </Step>
+  
+  <Step title="Use it">
+    Talk to your OpenClaw agent:
+    
+    "Search Trackyard for upbeat music for a product demo"
+  </Step>
+</Steps>
+
+---
+
+## Verify Installation
+
+Test that the MCP server is working:
+
+**In Claude/Cursor:**
+
+"Search Trackyard for upbeat electronic music"
+
+If the AI responds with search results, you're all set!
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="AI says 'Trackyard MCP server not found'" icon="circle-xmark">
+    **Cause:** The MCP server isn't configured correctly.
+    
+    **Fix:**
+    - Check that `claude_desktop_config.json` is in the right location
+    - Verify the JSON syntax is valid
+    - Restart Claude Desktop / Cursor
+  </Accordion>
+  
+  <Accordion title="401 Unauthorized errors" icon="key">
+    **Cause:** Invalid or missing API key.
+    
+    **Fix:**
+    - Check that `TRACKYARD_API_KEY` is set correctly in the config
+    - Verify the key is active at [app.trackyard.com/api-keys](https://app.trackyard.com/api-keys)
+    - Generate a new key if needed
+  </Accordion>
+  
+  <Accordion title="npx command not found" icon="terminal">
+    **Cause:** Node.js isn't installed or not in PATH.
+    
+    **Fix:**
+    - Install Node.js from [nodejs.org](https://nodejs.org)
+    - Verify with `node --version` and `npx --version`
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Using with AI Agents" icon="robot" href="/mcp-server/using-with-ai-agents">
+    Learn how to search and download music via MCP
+  </Card>
+  
+  <Card title="What is MCP?" icon="circle-info" href="/mcp-server/what-is-mcp">
+    Understand how MCP works
+  </Card>
+  
+  <Card title="API Reference" icon="book" href="/api-reference/search">
+    See what the MCP server can do under the hood
+  </Card>
+</CardGroup>

@@ -1,0 +1,249 @@
+---
+title: "Parameters Guide"
+description: "Complete reference of all available search filters and download options"
+---
+
+Comprehensive guide to all parameters available across Trackyard API endpoints.
+
+---
+
+## Search Filters
+
+Use these filters with `POST /search` to refine results.
+
+### Query Parameters
+
+<ParamField path="query" type="string" required>
+  Natural language description of what you need.
+  
+  **Tips:**
+  - Be specific: "upbeat electronic for tech demo" > "upbeat music"
+  - Include context: Mention the scene, platform, or use case
+  - Reference styles: "something like Tycho but faster"
+</ParamField>
+
+<ParamField path="limit" type="number" default={20}>
+  Number of results to return.
+  
+  **Range:** 1-100
+</ParamField>
+
+<ParamField path="offset" type="number" default={0}>
+  Pagination offset for browsing large result sets.
+</ParamField>
+
+---
+
+### Filter Object
+
+All filters are optional and can be combined.
+
+<ParamField path="filters.genres" type="array">
+  Array of genre strings. Tracks must match at least one.
+  
+  **Common genres:**
+  - Electronic: `"House"`, `"Techno"`, `"Ambient"`, `"Lo-Fi"`, `"Synthwave"`
+  - Hip Hop: `"Boom Bap"`, `"Trap"`, `"Lo-Fi Hip Hop"`, `"Instrumental"`
+  - Cinematic: `"Orchestral"`, `"Hybrid"`, `"Trailer Music"`, `"Underscore"`
+  - Corporate: `"Uplifting"`, `"Minimal"`, `"Professional"`
+  - Acoustic: `"Folk"`, `"Singer-Songwriter"`, `"Indie"`, `"Americana"`
+  - Classical: `"String Quartet"`, `"Piano"`, `"Chamber"`, `"Baroque"`
+  
+  **Example:** `["Electronic", "Pop"]`
+</ParamField>
+
+<ParamField path="filters.moods" type="array">
+  Array of mood strings. Tracks must match at least one.
+  
+  **Common moods:**
+  - Energy: `"Upbeat"`, `"Energetic"`, `"Motivational"`, `"Powerful"`
+  - Calm: `"Chill"`, `"Relaxed"`, `"Peaceful"`, `"Ambient"`
+  - Emotional: `"Warm"`, `"Nostalgic"`, `"Melancholic"`, `"Hopeful"`
+  - Professional: `"Corporate"`, `"Clean"`, `"Modern"`, `"Minimal"`
+  - Dramatic: `"Tense"`, `"Suspenseful"`, `"Epic"`, `"Cinematic"`
+  
+  **Example:** `["Upbeat", "Motivational"]`
+</ParamField>
+
+<ParamField path="filters.has_vocals" type="boolean">
+  Filter by vocal presence.
+  
+  - `true`: Only tracks with vocals
+  - `false`: Instrumental only
+  - Omit: No filter (returns both)
+</ParamField>
+
+<ParamField path="filters.min_bpm" type="number">
+  Minimum tempo in beats per minute.
+  
+  **Range:** 40-200
+  
+  **Reference:**
+  - 60-90: Slow (ballads, ambient)
+  - 90-120: Medium (pop, rock)
+  - 120-140: Upbeat (house, dance)
+  - 140+: Fast (drum & bass, hardcore)
+</ParamField>
+
+<ParamField path="filters.max_bpm" type="number">
+  Maximum tempo in beats per minute.
+  
+  **Range:** 40-200
+</ParamField>
+
+<ParamField path="filters.energy_level" type="string">
+  Overall energy intensity.
+  
+  **Options:**
+  - `"low"`: Calm, ambient, background music
+  - `"medium"`: Moderate energy, conversational
+  - `"high"`: Energetic, upbeat, driving
+</ParamField>
+
+<ParamField path="filters.instruments" type="array">
+  Array of instrument strings. Tracks must include at least one.
+  
+  **Common instruments:**
+  - `"Piano"`, `"Guitar"`, `"Drums"`, `"Bass"`
+  - `"Synth"`, `"Strings"`, `"Brass"`, `"Woodwinds"`
+  - `"Vocals"`, `"Percussion"`, `"Organ"`, `"Harp"`
+  
+  **Example:** `["Piano", "Strings"]`
+</ParamField>
+
+---
+
+## Download Parameters
+
+Use these with `POST /download-track` to control output.
+
+<ParamField path="track_id" type="string" required>
+  Track ID from search results.
+</ParamField>
+
+<ParamField path="duration_seconds" type="number">
+  Clip length in seconds. Omit for full track.
+  
+  **Range:** 10-300 seconds
+  **Minimum recommended:** 10 seconds
+  
+  **What happens:** Trackyard analyzes the waveform and selects the best-sounding segment automatically.
+</ParamField>
+
+<ParamField path="hit_point_seconds" type="number">
+  Offset where the musical peak should land. **Requires `duration_seconds`.**
+  
+  **Range:** Must be < `duration_seconds`
+  **Precision:** ±1 second
+  
+  **Use case:** Sync music's climax to a specific moment (product reveal, logo drop, title card).
+  
+  **Example:** For a 30-second clip with the hit at 18 seconds:
+  ```json
+  {
+    "track_id": "trk_abc123",
+    "duration_seconds": 30,
+    "hit_point_seconds": 18
+  }
+  ```
+</ParamField>
+
+---
+
+## Filter Combination Examples
+
+### Social Media Reel (15s, upbeat, no vocals)
+
+```json
+{
+  "query": "upbeat music for Instagram Reel about travel",
+  "filters": {
+    "has_vocals": false,
+    "min_bpm": 120,
+    "energy_level": "high"
+  }
+}
+```
+
+### Podcast Intro (30s, professional, clean)
+
+```json
+{
+  "query": "professional intro music for business podcast",
+  "filters": {
+    "moods": ["Corporate", "Modern"],
+    "max_bpm": 120,
+    "has_vocals": false
+  }
+}
+```
+
+### Product Demo (ambient, minimal, no rush)
+
+```json
+{
+  "query": "minimal background music for SaaS demo",
+  "filters": {
+    "genres": ["Electronic", "Ambient"],
+    "energy_level": "low",
+    "has_vocals": false,
+    "max_bpm": 110
+  }
+}
+```
+
+### Cinematic Trailer (epic, orchestral, building)
+
+```json
+{
+  "query": "epic orchestral music for movie trailer",
+  "filters": {
+    "genres": ["Orchestral", "Cinematic"],
+    "moods": ["Epic", "Powerful"],
+    "min_bpm": 100,
+    "instruments": ["Strings", "Brass", "Percussion"]
+  }
+}
+```
+
+---
+
+## Tips for Effective Filtering
+
+<Tip>
+  **Start broad, refine narrow:** Let the AI interpret your query first, then add filters if needed
+</Tip>
+
+<Tip>
+  **Don't over-filter:** Too many filters can exclude great matches. Start with 2-3 key constraints
+</Tip>
+
+<Tip>
+  **Use energy_level for vibe:** It's often more effective than BPM for matching overall feel
+</Tip>
+
+<Tip>
+  **Combine moods wisely:** Some combinations don't make sense ("Tense" + "Relaxed" = no results)
+</Tip>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Search API" icon="magnifying-glass" href="/api-reference/search">
+    Full `/search` endpoint reference
+  </Card>
+  
+  <Card title="Download API" icon="download" href="/api-reference/download-track">
+    Full `/download-track` endpoint reference
+  </Card>
+  
+  <Card title="AI-Powered Search" icon="sparkles" href="/core-concepts/ai-powered-search">
+    Learn how natural language search works
+  </Card>
+  
+  <Card title="Code Examples" icon="code" href="/api-reference/examples">
+    See these parameters in action
+  </Card>
+</CardGroup>

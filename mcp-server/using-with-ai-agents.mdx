@@ -1,0 +1,196 @@
+---
+title: "Using Trackyard with AI Agents"
+description: "Conversational music search and download via Claude, Cursor, and other MCP-compatible agents"
+---
+
+Once the Trackyard MCP server is installed, you can search and download music conversationally through your AI agent. No code required.
+
+---
+
+## Basic Workflow
+
+<Steps>
+  <Step title="Describe what you need">
+    **You:** "I need upbeat music for a 30-second Instagram Reel about travel"
+  </Step>
+  
+  <Step title="The AI searches Trackyard">
+    **Claude:** "I'll search Trackyard for upbeat travel music..."
+    
+    [Presents 3-5 top results with titles, artists, BPM, moods]
+  </Step>
+  
+  <Step title="Choose a track">
+    **You:** "Download the second one as a 30-second clip"
+  </Step>
+  
+  <Step title="The AI downloads and saves">
+    **Claude:** "Downloaded 'Summer Wanderlust' as a 30-second clip → `travel_music.mp3`"
+  </Step>
+</Steps>
+
+---
+
+## Example Conversations
+
+### Simple Search and Download
+
+```
+You: "Find me chill lo-fi music for a coding stream"
+
+Claude: "I'll search Trackyard for chill lo-fi music..."
+
+[Results:]
+1. Late Night Code - Lo-Fi Cafe (120 BPM, Chill, Relaxed)
+2. Focus Flow - Beat Lab (95 BPM, Ambient, Minimal)
+3. Terminal Sessions - Code Beats (110 BPM, Lo-Fi, Calm)
+
+You: "Download the first one"
+
+Claude: "Downloaded 'Late Night Code' (2:42) → late_night_code.mp3"
+```
+
+---
+
+### Smart Trimming
+
+```
+You: "Find upbeat music for a product reveal video"
+
+Claude: [presents 5 results]
+
+You: "Download #3 as a 22-second clip with the big hit at 12 seconds"
+
+Claude: "Downloaded 'Digital Sunrise' as a 22-second clip with the musical peak aligned to 12 seconds → product_reveal_music.mp3"
+```
+
+---
+
+### Batch Operations
+
+```
+You: "Find 3 different tracks for travel videos and download 15-second clips of each"
+
+Claude: [searches, presents 3 tracks]
+
+"Downloaded 15-second clips:
+1. Summer Wanderlust → track1.mp3
+2. Open Road → track2.mp3
+3. Horizon Chaser → track3.mp3"
+```
+
+---
+
+## Advanced Use Cases
+
+<AccordionGroup>
+  <Accordion title="Filter by specific criteria" icon="filter">
+    **You:** "Find electronic music with no vocals, 120-140 BPM, high energy"
+    
+    **Claude:** [searches with filters: `has_vocals: false`, `min_bpm: 120`, `max_bpm: 140`, `energy_level: "high"`]
+  </Accordion>
+  
+  <Accordion title="Compare multiple tracks" icon="scale-balanced">
+    **You:** "Show me 5 options for a corporate training video, then I'll pick one"
+    
+    **Claude:** [presents 5 tracks with metadata, lets you audition via preview URLs, then downloads your choice]
+  </Accordion>
+  
+  <Accordion title="Match music to specific scenes" icon="film">
+    **You:** "I need tense music for a chase scene, around 90 seconds, building in intensity"
+    
+    **Claude:** [searches with moods: "Tense", "Suspenseful", "Building" and downloads a 90-second clip]
+  </Accordion>
+  
+  <Accordion title="A/B test variants" icon="flask">
+    **You:** "Give me 3 different vibes for a product demo: upbeat, minimal, and cinematic"
+    
+    **Claude:** [searches 3 times with different queries, downloads 3 clips]
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Tips for Best Results
+
+<Tip>
+  **Be specific:** "upbeat electronic for tech demo" > "upbeat music"
+</Tip>
+
+<Tip>
+  **Mention the use case:** Context helps the AI infer genre, mood, and energy
+</Tip>
+
+<Tip>
+  **Ask for previews:** "Show me previews first" lets you audition before downloading
+</Tip>
+
+<Tip>
+  **Use natural language:** The AI understands "the big hit should land at 12 seconds" without technical jargon
+</Tip>
+
+---
+
+## What the MCP Server Can Do
+
+The Trackyard MCP server exposes these capabilities to AI agents:
+
+<CardGroup cols={2}>
+  <Card title="Search" icon="magnifying-glass">
+    Natural language queries with optional filters (genre, mood, BPM, vocals, energy)
+  </Card>
+  
+  <Card title="Download Full Tracks" icon="download">
+    Get the complete audio file with perpetual license
+  </Card>
+  
+  <Card title="Smart Trimming" icon="scissors">
+    Auto-select best segments for specific durations
+  </Card>
+  
+  <Card title="Hit Point Alignment" icon="bullseye">
+    Choreograph musical peaks to specific offsets
+  </Card>
+  
+  <Card title="Preview Streaming" icon="headphones">
+    Listen to 30-second previews before downloading
+  </Card>
+  
+  <Card title="Account Info" icon="user">
+    Check credit balance and rate limits
+  </Card>
+</CardGroup>
+
+---
+
+## Limitations
+
+<Warning>
+  **Credit consumption:** Each search and download consumes credits, just like the REST API. The AI will warn you when credits are low.
+</Warning>
+
+<Warning>
+  **Rate limits apply:** The MCP server is subject to the same rate limits as direct API calls (10 req/min on free tier).
+</Warning>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Setup Guide" icon="gear" href="/mcp-server/setup-guide">
+    Install the MCP server if you haven't yet
+  </Card>
+  
+  <Card title="What is MCP?" icon="circle-info" href="/mcp-server/what-is-mcp">
+    Learn more about the Model Context Protocol
+  </Card>
+  
+  <Card title="API Reference" icon="book" href="/api-reference/search">
+    See what's happening under the hood
+  </Card>
+  
+  <Card title="Use Cases" icon="lightbulb" href="/use-cases/social-media-content-farms">
+    Get inspired by real-world workflows
+  </Card>
+</CardGroup>

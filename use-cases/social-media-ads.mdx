@@ -1,0 +1,246 @@
+---
+title: "Social Media Ads"
+description: "Align musical peaks to product reveals using hit_point_seconds"
+icon: "bullhorn"
+---
+
+Social media ads live or die on timing. The best ads sync music peaks to key moments — product reveals, logo drops, CTA screens. Trackyard's hit point alignment automates this sync perfectly.
+
+---
+
+## The Challenge
+
+You're cutting a 15-second Instagram ad:
+- Product appears at **8 seconds**
+- Music should hit its peak **exactly** when the product enters the frame
+- Traditional libraries require manual audio editing to align the hit
+
+**Problem:** Manual alignment takes 5-10 minutes per ad variant. At scale, this doesn't work.
+
+---
+
+## The Trackyard Solution
+
+Use `hit_point_seconds` to choreograph the music's climax to your reveal moment.
+
+```bash
+curl -X POST https://api.trackyard.com/api/external/v1/download-track \
+  -H "Authorization: Bearer $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "track_id": "trk_abc123",
+    "duration_seconds": 15,
+    "hit_point_seconds": 8
+  }' \
+  --output ad_music.mp3
+```
+
+**What happens:**
+1. Trackyard finds the dominant energy peak in the track (the biggest drop/hit/crescendo)
+2. It selects a 15-second segment where that peak lands at exactly 8 seconds
+3. You get a clip perfectly timed to your product reveal
+
+**Zero manual editing.**
+
+---
+
+## Example: Product Reveal Ad
+
+**Scenario:** 15-second Instagram Reel ad for a new sneaker
+
+**Storyboard:**
+- 0-7s: Product shots, building anticipation
+- **8s: Sneaker reveal** ← music should peak here
+- 9-15s: CTA + logo
+
+**Request:**
+
+```json
+{
+  "track_id": "trk_xyz789",
+  "duration_seconds": 15,
+  "hit_point_seconds": 8
+}
+```
+
+**Result:** Music builds for 7 seconds, hits the peak right as the sneaker appears, then resolves into the CTA.
+
+---
+
+## Common Ad Formats
+
+<Tabs>
+  <Tab title="Instagram Reels (15s)">
+    **Typical structure:**
+    - 0-7s: Setup/problem
+    - **8s: Product reveal**
+    - 9-14s: Benefits
+    - 15s: CTA
+    
+    **Request:**
+    ```json
+    {
+      "duration_seconds": 15,
+      "hit_point_seconds": 8
+    }
+    ```
+  </Tab>
+  
+  <Tab title="TikTok (60s)">
+    **Typical structure:**
+    - 0-10s: Hook
+    - 11-40s: Story/demo
+    - **41s: Reveal/climax**
+    - 42-60s: CTA
+    
+    **Request:**
+    ```json
+    {
+      "duration_seconds": 60,
+      "hit_point_seconds": 41
+    }
+    ```
+  </Tab>
+  
+  <Tab title="YouTube Pre-Roll (30s)">
+    **Typical structure:**
+    - 0-5s: Skippable timer
+    - 6-20s: Value prop
+    - **21s: Logo/brand moment**
+    - 22-30s: CTA
+    
+    **Request:**
+    ```json
+    {
+      "duration_seconds": 30,
+      "hit_point_seconds": 21
+    }
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## A/B Testing Ad Variants
+
+Run the same ad with different music to test performance:
+
+```python
+# Search for different vibes
+tracks = [
+    search("upbeat electronic music"),
+    search("warm acoustic music"),
+    search("epic cinematic music"),
+]
+
+# Generate variants with the same timing
+for i, track in enumerate(tracks):
+    audio = download(
+        track_id=track["id"],
+        duration_seconds=15,
+        hit_point_seconds=8  # Same reveal timing across variants
+    )
+    save(f"ad_variant_{i}.mp3", audio)
+```
+
+Test which vibe drives the highest CTR while keeping the visual edit identical.
+
+---
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Choose tracks with clear peaks" icon="chart-line">
+    Electronic drops, orchestral crescendos, and hip hop hits work best.
+    
+    **Good candidates:**
+    - EDM with build-ups and drops
+    - Cinematic music with crescendos
+    - Hip hop with bass hits
+    
+    **Less ideal:**
+    - Ambient (no clear peaks)
+    - Minimalist classical (subtle dynamics)
+  </Accordion>
+  
+  <Accordion title="Test hit point offsets" icon="clock">
+    If the alignment feels slightly off, try adjusting ±1-2 seconds:
+    
+    ```json
+    // Original
+    {"hit_point_seconds": 8}
+    
+    // Try earlier
+    {"hit_point_seconds": 7}
+    
+    // Try later
+    {"hit_point_seconds": 9}
+    ```
+  </Accordion>
+  
+  <Accordion title="Batch A/B test variants" icon="flask">
+    Generate multiple music options upfront:
+    
+    1. Search for 5 different tracks
+    2. Download each with the same `hit_point_seconds`
+    3. Swap the audio track in your video editor
+    4. Test all 5 variants simultaneously
+  </Accordion>
+  
+  <Accordion title="Align hit points to visual moments" icon="crosshairs">
+    Best hit point placements:
+    - Product reveals
+    - Logo drops
+    - Before-and-after transitions
+    - CTA screens
+    - Brand moments
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Code Example: Multi-Platform Ad
+
+Same video, different durations for each platform:
+
+```python
+platforms = [
+    {"name": "instagram", "duration": 15, "reveal_at": 8},
+    {"name": "tiktok", "duration": 60, "reveal_at": 35},
+    {"name": "youtube", "duration": 30, "reveal_at": 18},
+]
+
+# Search once
+track_id = search("upbeat music for tech product")["tracks"][0]["id"]
+
+# Generate platform-specific clips
+for platform in platforms:
+    audio = download(
+        track_id=track_id,
+        duration_seconds=platform["duration"],
+        hit_point_seconds=platform["reveal_at"]
+    )
+    save(f"ad_{platform['name']}.mp3", audio)
+```
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Smart Clip Trimming" icon="scissors" href="/core-concepts/smart-clip-trimming">
+    Learn how hit point alignment works
+  </Card>
+  
+  <Card title="Download API" icon="download" href="/api-reference/download-track">
+    Full endpoint reference
+  </Card>
+  
+  <Card title="Code Examples" icon="code" href="/api-reference/examples">
+    See Python and JavaScript examples
+  </Card>
+  
+  <Card title="Product Demos" icon="box" href="/use-cases/product-demos">
+    Similar use case for demo videos
+  </Card>
+</CardGroup>

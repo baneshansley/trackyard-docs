@@ -1,0 +1,188 @@
+---
+title: "Authentication"
+description: "How to create, manage, and secure your Trackyard API keys"
+---
+
+Trackyard uses API keys for authentication. Every request to the API must include a valid API key in the `Authorization` header.
+
+---
+
+## Creating an API Key
+
+<Steps>
+  <Step title="Log in to your account">
+    Go to [app.trackyard.com](https://app.trackyard.com) and sign in.
+  </Step>
+  
+  <Step title="Navigate to API Keys">
+    Click **API Keys** in the dashboard or visit [app.trackyard.com/api-keys](https://app.trackyard.com/api-keys).
+  </Step>
+  
+  <Step title="Generate a new key">
+    Click **Create API Key**, give it a descriptive name (e.g., "Production App" or "Testing"), and save the key immediately.
+    
+    <Warning>
+      **The key is shown only once.** Copy it to a secure location immediately. If you lose it, you'll need to generate a new one.
+    </Warning>
+  </Step>
+</Steps>
+
+---
+
+## Using Your API Key
+
+Include your API key in the `Authorization` header of every request using the `Bearer` token scheme:
+
+```bash
+Authorization: Bearer your_api_key_here
+```
+
+### Example Request
+
+```bash
+curl https://api.trackyard.com/api/external/v1/me \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY"
+```
+
+---
+
+## Security Best Practices
+
+<AccordionGroup>
+  <Accordion title="Store keys in environment variables" icon="lock">
+    **Never hardcode API keys in your source code.** Use environment variables instead.
+    
+    ```bash
+    # .env file (add to .gitignore!)
+    TRACKYARD_API_KEY=your_api_key_here
+    ```
+    
+    ```python
+    # Python
+    import os
+    API_KEY = os.environ["TRACKYARD_API_KEY"]
+    ```
+    
+    ```javascript
+    // Node.js
+    const API_KEY = process.env.TRACKYARD_API_KEY;
+    ```
+  </Accordion>
+  
+  <Accordion title="Use separate keys for different environments" icon="code-branch">
+    Create distinct API keys for development, staging, and production environments. This allows you to:
+    
+    - Revoke a compromised key without affecting other environments
+    - Monitor usage separately per environment
+    - Enforce different rate limits if needed
+    
+    **Naming convention:**
+    - `Production - Main App`
+    - `Staging - Test Environment`
+    - `Development - Local Testing`
+  </Accordion>
+  
+  <Accordion title="Rotate keys regularly" icon="arrows-rotate">
+    As a security best practice, rotate your API keys periodically (every 90 days recommended):
+    
+    1. Generate a new API key
+    2. Update your application to use the new key
+    3. Test that the new key works
+    4. Revoke the old key
+  </Accordion>
+  
+  <Accordion title="Restrict key permissions (coming soon)" icon="shield">
+    Future feature: Assign read-only or download-only permissions to specific keys for added security.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Managing API Keys
+
+### View All Keys
+
+In your [API Keys dashboard](https://app.trackyard.com/api-keys), you can see:
+
+- **Key name** — The label you assigned
+- **Created date** — When the key was generated
+- **Last used** — Most recent API call timestamp
+- **Status** — Active or revoked
+
+### Revoke a Key
+
+If a key is compromised or no longer needed:
+
+1. Go to [app.trackyard.com/api-keys](https://app.trackyard.com/api-keys)
+2. Find the key in the list
+3. Click **Revoke**
+4. Confirm the action
+
+<Warning>
+  **Revoking a key is immediate and irreversible.** All applications using that key will stop working instantly. Make sure you've updated your code to use a new key first.
+</Warning>
+
+---
+
+## API Key Metadata
+
+Use the `/me` endpoint to check your key's metadata:
+
+```bash
+curl https://api.trackyard.com/api/external/v1/me \
+  -H "Authorization: Bearer $TRACKYARD_API_KEY"
+```
+
+**Response:**
+
+```json
+{
+  "tier": "free",
+  "credits_remaining": 487,
+  "monthly_allowance": 500,
+  "rate_limit": {
+    "requests_per_minute": 10,
+    "requests_per_day": 1000
+  },
+  "created_at": "2026-01-15T10:30:00Z",
+  "last_used_at": "2026-02-20T14:22:15Z"
+}
+```
+
+---
+
+## Common Authentication Errors
+
+<AccordionGroup>
+  <Accordion title="401 Unauthorized" icon="circle-xmark">
+    **Cause:** Missing, invalid, or expired API key.
+    
+    **Solutions:**
+    - Check that your key is correct (no extra spaces or characters)
+    - Verify the `Authorization: Bearer` format
+    - Ensure the key hasn't been revoked
+    - Generate a new key if needed
+  </Accordion>
+  
+  <Accordion title="403 Forbidden" icon="ban">
+    **Cause:** API key is valid but lacks permissions for the requested action.
+    
+    **Solutions:**
+    - Check your account tier (some features require paid plans)
+    - Verify you're not trying to access admin-only endpoints
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Rate Limits & Credits" icon="gauge" href="/getting-started/rate-limits-credits">
+    Understand how credits and rate limits work
+  </Card>
+  
+  <Card title="API Quickstart" icon="rocket" href="/getting-started/api-quickstart">
+    Make your first API call
+  </Card>
+</CardGroup>
