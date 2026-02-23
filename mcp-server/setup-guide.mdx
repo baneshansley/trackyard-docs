@@ -22,7 +22,7 @@ The Trackyard MCP server lets AI agents search and download music conversational
 No installation required — the MCP server runs on-demand:
 
 ```bash
-npx @trackyard/mcp-server
+npx @lnrz-xyz/trackyard-mcp
 ```
 
 ### Option 2: Global Install
@@ -30,7 +30,7 @@ npx @trackyard/mcp-server
 Install once, use everywhere:
 
 ```bash
-npm install -g @trackyard/mcp-server
+npm install -g @lnrz-xyz/trackyard-mcp
 trackyard-mcp
 ```
 
@@ -52,7 +52,7 @@ trackyard-mcp
       "mcpServers": {
         "trackyard": {
           "command": "npx",
-          "args": ["@trackyard/mcp-server"],
+          "args": ["@lnrz-xyz/trackyard-mcp"],
           "env": {
             "TRACKYARD_API_KEY": "your_api_key_here"
           }
@@ -79,7 +79,7 @@ trackyard-mcp
     {
       "trackyard": {
         "command": "npx",
-        "args": ["@trackyard/mcp-server"],
+        "args": ["@lnrz-xyz/trackyard-mcp"],
         "env": {
           "TRACKYARD_API_KEY": "your_api_key_here"
         }
@@ -96,9 +96,12 @@ trackyard-mcp
 ### OpenClaw
 
 <Steps>
-  <Step title="Install the Trackyard skill">
+  <Step title="Install the Trackyard skill from ClawHub">
+    Visit [ClawHub: Trackyard Skill](https://clawhub.ai/benny-conn/trackyard) and click "Install"
+    
+    Or install via CLI:
     ```bash
-    npx skills add https://trackyard.com/openclaw-skill
+    npx skills add https://clawhub.ai/benny-conn/trackyard
     ```
   </Step>
   
