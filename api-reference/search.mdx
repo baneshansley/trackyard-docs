@@ -141,8 +141,12 @@ curl -X POST https://api.trackyard.com/api/external/v1/search \
       Musical key (e.g., "C Major", "A Minor").
     </ResponseField>
     
-    <ResponseField name="genres" type="array">
-      Array of genre tags.
+    <ResponseField name="genre" type="string">
+      Parent genre (e.g., "Hip Hop", "Electronic", "Rock").
+    </ResponseField>
+    
+    <ResponseField name="subgenres" type="array">
+      Array of sub-genre tags (e.g., ["Boom Bap", "Lo-Fi Hip Hop"]).
     </ResponseField>
     
     <ResponseField name="moods" type="array">
@@ -185,7 +189,8 @@ curl -X POST https://api.trackyard.com/api/external/v1/search \
       "duration_seconds": 142,
       "bpm": 128,
       "key": "C Major",
-      "genres": ["Electronic", "Corporate"],
+      "genre": "Electronic",
+      "subgenres": ["Deep House", "Tech House"],
       "moods": ["Upbeat", "Energetic", "Modern"],
       "has_vocals": false,
       "energy_level": "high",
@@ -199,7 +204,8 @@ curl -X POST https://api.trackyard.com/api/external/v1/search \
       "duration_seconds": 156,
       "bpm": 132,
       "key": "D Major",
-      "genres": ["Electronic", "Pop"],
+      "genre": "Pop",
+      "subgenres": ["Dance-Pop", "Electropop"],
       "moods": ["Upbeat", "Motivational", "Tech"],
       "has_vocals": false,
       "energy_level": "high",
@@ -218,11 +224,11 @@ curl -X POST https://api.trackyard.com/api/external/v1/search \
 All responses include rate limit headers:
 
 ```http
-X-RateLimit-Limit: 10
-X-RateLimit-Remaining: 7
-X-RateLimit-Limit-Daily: 1000
-X-RateLimit-Remaining-Daily: 843
-X-Credits-Remaining: 487
+X-RateLimit-Limit: 5
+X-RateLimit-Remaining: 3
+X-RateLimit-Limit-Daily: 50
+X-RateLimit-Remaining-Daily: 42
+X-Credits-Remaining: 44
 ```
 
 See [Rate Limits & Credits](/getting-started/rate-limits-credits) for details.

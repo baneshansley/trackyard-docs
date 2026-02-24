@@ -28,10 +28,10 @@ Every API call that returns data costs **1 credit**:
 
 <Tabs>
   <Tab title="Free">
-    **500 credits/month**
+    **50 one-time credits** (no monthly reset)
     
-    - 10 requests/minute
-    - 1,000 requests/day
+    - 5 requests/minute
+    - 50 requests/day
     - Natural language search
     - Smart clip trimming
     - Basic support (email)
@@ -39,11 +39,11 @@ Every API call that returns data costs **1 credit**:
     **Best for:** Testing, hobby projects, low-volume use cases
   </Tab>
   
-  <Tab title="Starter (Coming Soon)">
-    **5,000 credits/month**
+  <Tab title="Starter">
+    **300 credits/month** — $19/month
     
-    - 60 requests/minute
-    - 10,000 requests/day
+    - 10 requests/minute
+    - Higher daily limits
     - Everything in Free, plus:
       - AI intent extraction (auto-infer genres, moods, BPM)
       - Priority support
@@ -73,8 +73,8 @@ Rate limits prevent abuse and ensure fair access. Limits are enforced per API ke
 
 ### Default Limits (Free Tier)
 
-- **10 requests per minute**
-- **1,000 requests per day**
+- **5 requests per minute**
+- **50 requests per day**
 
 When you exceed a rate limit, the API returns a `429 Too Many Requests` response with a `Retry-After` header indicating how long to wait (in seconds).
 
@@ -83,11 +83,11 @@ When you exceed a rate limit, the API returns a `429 Too Many Requests` response
 Every API response includes rate limit headers:
 
 ```http
-X-RateLimit-Limit: 10
-X-RateLimit-Remaining: 7
-X-RateLimit-Limit-Daily: 1000
-X-RateLimit-Remaining-Daily: 843
-X-Credits-Remaining: 487
+X-RateLimit-Limit: 5
+X-RateLimit-Remaining: 3
+X-RateLimit-Limit-Daily: 50
+X-RateLimit-Remaining-Daily: 42
+X-Credits-Remaining: 44
 ```
 
 | Header | Description |
