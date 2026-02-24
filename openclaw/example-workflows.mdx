@@ -1,0 +1,189 @@
+---
+title: "Example Workflows"
+description: "Real-world OpenClaw workflows using the Trackyard skill"
+---
+
+The Trackyard skill shines when combined with other OpenClaw skills to build end-to-end automated workflows. Here are real-world examples.
+
+---
+
+## Automated Social Media Content Farm
+
+The most powerful use case: fully automated video creation with music.
+
+### The Workflow
+
+"Every Monday and Wednesday at 9am:
+1. Generate 5 video ideas about travel destinations
+2. Find stock images at Pexels for each destination
+3. Stitch images together into 15-second videos
+4. Add a script with subtitles
+5. Search Trackyard for upbeat travel music
+6. Add the music to each video
+7. Save the final videos to my Google Drive"
+
+### What OpenClaw Does
+
+1. **Generates ideas** — Uses AI to create 5 travel destination concepts
+2. **Finds images** — Searches Pexels API for relevant stock photos
+3. **Creates videos** — Stitches images together (using ffmpeg or similar)
+4. **Adds scripts** — Generates voiceover text and burns in subtitles
+5. **Searches music** — Calls Trackyard skill: `search("upbeat travel music")`
+6. **Downloads clips** — Calls Trackyard skill: `download(track_id, duration_seconds=15)`
+7. **Merges audio+video** — Combines music with video
+8. **Uploads** — Saves to Google Drive
+
+**Result:** 5 fully produced videos, automatically created and delivered, twice a week.
+
+---
+
+## Simple Music Search
+
+For one-off music searches when you're not automating a workflow.
+
+### Example Conversation
+
+```
+You: "I need upbeat music for a product demo video"
+
+OpenClaw: "Searching Trackyard for upbeat music..."
+
+[Shows 5 results with titles, artists, moods, BPM]
+
+You: "Download the third one as a 30-second clip"
+
+OpenClaw: "Downloaded 'Digital Sunrise' (30s) → product_music.mp3"
+```
+
+---
+
+## Batch Video Scoring
+
+Score multiple videos with the same music style.
+
+### The Workflow
+
+"I have 10 videos in my 'Product Demos' folder. For each video:
+1. Check the video duration
+2. Search Trackyard for 'minimal electronic music for tech products'
+3. Download a clip matching the exact video duration
+4. Merge the music with the video
+5. Save to 'Finished Videos' folder"
+
+**OpenClaw handles:**
+- Reading video durations automatically
+- Searching Trackyard once, reusing the track
+- Trimming music to match each video's length
+- Batch processing all 10 videos
+
+---
+
+## Weekly Content Calendar
+
+Create a recurring workflow for social media.
+
+### The Schedule
+
+**Monday 9am:**
+"Create 3 Instagram Reels (15s each) about healthy recipes with chill background music"
+
+**Wednesday 2pm:**
+"Create 2 YouTube Shorts (30s each) about home workouts with energetic music"
+
+**Friday 5pm:**
+"Create 5 TikToks (60s each) about travel tips with upbeat music"
+
+**What OpenClaw Does:**
+- Runs automatically on schedule
+- Generates content ideas
+- Finds stock footage
+- Searches Trackyard for appropriate music
+- Creates final videos
+- Saves to your content calendar folder
+
+---
+
+## A/B Testing Music Styles
+
+Test which music style performs best for your content.
+
+### The Workflow
+
+"For my product demo video:
+1. Search Trackyard for 3 different music styles: upbeat, minimal, and cinematic
+2. Create 3 versions of the video (same visuals, different music)
+3. Name them: demo_upbeat.mp4, demo_minimal.mp4, demo_cinematic.mp4
+4. Save to my 'A/B Tests' folder"
+
+**Result:** 3 video variants ready to test, created in one command.
+
+---
+
+## Podcast Intro Music
+
+Find and apply background music for podcast episodes.
+
+### The Workflow
+
+"For each episode in my 'Podcast Episodes' folder:
+1. Search Trackyard for 'professional background music for business podcast'
+2. Download a 20-second clip
+3. Add it as the intro music (fade in for 3 seconds, fade out for 2 seconds)
+4. Save to 'Ready to Publish' folder"
+
+---
+
+## Tips for Building Workflows
+
+<AccordionGroup>
+  <Accordion title="Be specific with music queries" icon="bullseye">
+    **Good:** "upbeat electronic music for tech product demo"
+    
+    **Bad:** "upbeat music"
+    
+    **Why:** Context helps Trackyard's AI find the right vibe.
+  </Accordion>
+  
+  <Accordion title="Reuse tracks across similar content" icon="recycle">
+    If you're creating 10 videos with the same style, search once and reuse the track:
+    
+    "Search Trackyard for travel music, then use that track for all 10 videos with different durations"
+  </Accordion>
+  
+  <Accordion title="Leverage smart trimming" icon="scissors">
+    Instead of manually trimming music, let Trackyard do it:
+    
+    "Download as a 30-second clip" → OpenClaw passes `duration_seconds: 30` automatically
+  </Accordion>
+  
+  <Accordion title="Combine with other skills" icon="puzzle-piece">
+    The power of OpenClaw is combining skills:
+    
+    - **Pexels skill** → Find images
+    - **Trackyard skill** → Find music
+    - **Google Drive skill** → Save outputs
+    - **Scheduler** → Automate recurring workflows
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/openclaw/installation">
+    Install the Trackyard skill if you haven't yet
+  </Card>
+  
+  <Card title="What is OpenClaw?" icon="circle-info" href="/openclaw/what-is-openclaw">
+    Learn more about OpenClaw
+  </Card>
+  
+  <Card title="Use Cases" icon="lightbulb" href="/use-cases/social-media-content-farms">
+    See more real-world examples
+  </Card>
+  
+  <Card title="API Reference" icon="book" href="/api-reference/search">
+    Understand what's happening under the hood
+  </Card>
+</CardGroup>

@@ -54,7 +54,23 @@
         ]
       },
       {
-        "group": "Getting Started",
+        "group": "OpenClaw Skill",
+        "pages": [
+          "openclaw/what-is-openclaw",
+          "openclaw/installation",
+          "openclaw/example-workflows"
+        ]
+      },
+      {
+        "group": "MCP Server",
+        "pages": [
+          "mcp-server/what-is-mcp",
+          "mcp-server/setup-guide",
+          "mcp-server/using-with-ai-agents"
+        ]
+      },
+      {
+        "group": "Getting Started (API)",
         "pages": [
           "getting-started/api-quickstart",
           "getting-started/authentication",
@@ -92,14 +108,6 @@
           "use-cases/real-estate-walkthroughs",
           "use-cases/corporate-training",
           "use-cases/app-game-trailers"
-        ]
-      },
-      {
-        "group": "MCP Server",
-        "pages": [
-          "mcp-server/what-is-mcp",
-          "mcp-server/setup-guide",
-          "mcp-server/using-with-ai-agents"
         ]
       }
     ]

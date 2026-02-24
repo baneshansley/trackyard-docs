@@ -236,8 +236,8 @@ See [Rate Limits & Credits](/getting-started/rate-limits-credits) for details.
   
   ```json
   {
-    "error": "Invalid API key",
-    "code": "unauthorized"
+    "error": "Unauthorized",
+    "message": "Invalid API key"
   }
   ```
 </ResponseField>
@@ -247,9 +247,8 @@ See [Rate Limits & Credits](/getting-started/rate-limits-credits) for details.
   
   ```json
   {
-    "error": "Out of credits. Please top up or upgrade your plan.",
-    "code": "out_of_credits",
-    "credits_remaining": 0
+    "error": "Out of credits",
+    "message": "Please top up or upgrade your plan"
   }
   ```
 </ResponseField>
@@ -259,9 +258,8 @@ See [Rate Limits & Credits](/getting-started/rate-limits-credits) for details.
   
   ```json
   {
-    "error": "Rate limit exceeded",
-    "code": "rate_limit_exceeded",
-    "retry_after": 42
+    "error": "Too Many Requests",
+    "message": "Rate limit exceeded"
   }
   ```
 </ResponseField>

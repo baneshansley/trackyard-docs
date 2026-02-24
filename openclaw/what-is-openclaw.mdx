@@ -1,0 +1,137 @@
+---
+title: "What is OpenClaw?"
+description: "Introduction to OpenClaw and how the Trackyard skill works"
+---
+
+**OpenClaw** is an AI assistant platform that lets you build workflows and automate tasks using natural language. The Trackyard skill gives OpenClaw direct access to search and download music from the catalog.
+
+---
+
+## How It Works
+
+Instead of writing code, you describe what you want in plain English to your OpenClaw bot:
+
+**You:** "Find upbeat music for a 30-second Instagram Reel about travel and download it"
+
+**OpenClaw:**
+1. Searches Trackyard using the Trackyard skill
+2. Presents results
+3. Downloads the track when you confirm
+4. Saves it to your specified location
+
+All conversational. Zero code.
+
+---
+
+## Trackyard Skill vs. Direct API
+
+<Tabs>
+  <Tab title="Trackyard Skill (No-Code)">
+    **Best for:** Non-technical users, automated workflows, batch operations
+    
+    **How it works:**
+    - Talk to OpenClaw in plain English
+    - The skill calls the Trackyard API for you
+    - Automate complex workflows (video generation + music + uploading)
+    
+    **Example workflow:**
+    ```
+    "Every Monday and Wednesday:
+    1. Generate 5 video ideas about travel
+    2. Find stock images at Pexels
+    3. Stitch them together
+    4. Add script with subtitles
+    5. Search Trackyard for relevant music
+    6. Save videos to Google Drive"
+    ```
+  </Tab>
+  
+  <Tab title="Direct API (Programmatic)">
+    **Best for:** Custom integrations, your own applications
+    
+    **How it works:**
+    - Write code to call Trackyard endpoints
+    - Full control over parameters
+    - Integrate into existing codebases
+    
+    **Example workflow:**
+    ```python
+    tracks = search("upbeat music")
+    audio = download(tracks[0]["id"], duration_seconds=30)
+    save("music.mp3", audio)
+    ```
+  </Tab>
+</Tabs>
+
+---
+
+## What You Can Do With the Trackyard Skill
+
+<AccordionGroup>
+  <Accordion title="Search by natural language" icon="magnifying-glass">
+    **Example:**
+    
+    "Find me chill lo-fi music for a coding stream"
+    
+    **What happens:** OpenClaw searches Trackyard and presents relevant tracks.
+  </Accordion>
+  
+  <Accordion title="Download with smart trimming" icon="scissors">
+    **Example:**
+    
+    "Download that second track as a 30-second clip"
+    
+    **What happens:** OpenClaw downloads a smart-trimmed 30-second segment.
+  </Accordion>
+  
+  <Accordion title="Automate video workflows" icon="robot">
+    **Example:**
+    
+    "Create 5 travel videos with relevant music and upload to Google Drive"
+    
+    **What happens:** OpenClaw handles the entire pipeline — video generation, music search, downloading, merging, and uploading.
+  </Accordion>
+  
+  <Accordion title="Schedule recurring tasks" icon="calendar">
+    **Example:**
+    
+    "Every Monday, create 3 product demo videos with upbeat music"
+    
+    **What happens:** OpenClaw runs the workflow automatically on schedule.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## OpenClaw vs. MCP
+
+Both let you use Trackyard without code, but they work differently:
+
+| Feature | OpenClaw Skill | MCP Server |
+|---------|---------------|------------|
+| **Platform** | OpenClaw only | Claude, Cursor, any MCP-compatible agent |
+| **How it works** | Uses Trackyard API via skill | Uses Trackyard API via MCP protocol |
+| **Best for** | Automation, workflows, scheduling | Conversational music search in AI tools |
+| **Setup** | Install skill from ClawHub | Configure MCP server in agent settings |
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/openclaw/installation">
+    Install the Trackyard skill for OpenClaw
+  </Card>
+  
+  <Card title="Example Workflows" icon="wand-magic-sparkles" href="/openclaw/example-workflows">
+    See real-world workflow examples
+  </Card>
+  
+  <Card title="MCP Server" icon="plug" href="/mcp-server/what-is-mcp">
+    Or use Trackyard with Claude/Cursor via MCP
+  </Card>
+  
+  <Card title="API Reference" icon="code" href="/api-reference/search">
+    Or use the REST API directly
+  </Card>
+</CardGroup>

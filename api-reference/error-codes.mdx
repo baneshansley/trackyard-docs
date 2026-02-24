@@ -3,7 +3,7 @@ title: "Error Codes"
 description: "Complete reference of HTTP status codes and error responses"
 ---
 
-All Trackyard API errors return a JSON object with an `error` message and a machine-readable `code`.
+All Trackyard API errors return a JSON object with an `error` field and a `message` field.
 
 ---
 
@@ -11,9 +11,8 @@ All Trackyard API errors return a JSON object with an `error` message and a mach
 
 ```json
 {
-  "error": "Human-readable error message",
-  "code": "machine_readable_code",
-  "details": {}  // Optional: additional context
+  "error": "Brief error identifier",
+  "message": "Human-readable error description"
 }
 ```
 
@@ -47,8 +46,8 @@ All Trackyard API errors return a JSON object with an `error` message and a mach
 **Example:**
 ```json
 {
-  "error": "Invalid API key",
-  "code": "unauthorized"
+  "error": "Unauthorized",
+  "message": "Invalid API key"
 }
 ```
 
@@ -67,9 +66,8 @@ All Trackyard API errors return a JSON object with an `error` message and a mach
 **Example:**
 ```json
 {
-  "error": "Out of credits. Please top up or upgrade your plan.",
-  "code": "out_of_credits",
-  "credits_remaining": 0
+  "error": "Out of credits",
+  "message": "Please top up or upgrade your plan"
 }
 ```
 
@@ -87,9 +85,8 @@ All Trackyard API errors return a JSON object with an `error` message and a mach
 **Example:**
 ```json
 {
-  "error": "This feature requires a paid plan",
-  "code": "insufficient_permissions",
-  "required_tier": "starter"
+  "error": "Forbidden",
+  "message": "This feature requires a paid plan"
 }
 ```
 
@@ -107,9 +104,8 @@ All Trackyard API errors return a JSON object with an `error` message and a mach
 **Example:**
 ```json
 {
-  "error": "Track not found",
-  "code": "track_not_found",
-  "track_id": "trk_invalid"
+  "error": "Not Found",
+  "message": "Track not found"
 }
 ```
 
@@ -127,9 +123,8 @@ All Trackyard API errors return a JSON object with an `error` message and a mach
 **Example:**
 ```json
 {
-  "error": "Rate limit exceeded",
-  "code": "rate_limit_exceeded",
-  "retry_after": 42
+  "error": "Too Many Requests",
+  "message": "Rate limit exceeded"
 }
 ```
 
@@ -154,29 +149,14 @@ X-RateLimit-Remaining: 0
 **Example:**
 ```json
 {
-  "error": "Internal server error",
-  "code": "internal_error",
-  "request_id": "req_abc123"
+  "error": "Internal Server Error",
+  "message": "An unexpected error occurred"
 }
 ```
 
 **How to fix:**
 - Retry the request after a short delay
 - If the problem persists, contact support@trackyard.com with the `request_id`
-
----
-
-## Error Code Reference
-
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| `unauthorized` | 401 | Invalid or missing API key |
-| `out_of_credits` | 402 | Credit balance is zero |
-| `insufficient_permissions` | 403 | Feature requires a paid plan |
-| `track_not_found` | 404 | Track ID doesn't exist |
-| `rate_limit_exceeded` | 429 | Too many requests |
-| `invalid_parameters` | 400 | Malformed request parameters |
-| `internal_error` | 500 | Server-side error |
 
 ---
 

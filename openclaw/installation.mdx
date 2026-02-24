@@ -1,0 +1,125 @@
+---
+title: "Installation"
+description: "Install the Trackyard skill for OpenClaw"
+---
+
+The Trackyard skill is available on ClawHub, OpenClaw's skill marketplace. Installation takes less than 2 minutes.
+
+---
+
+## Prerequisites
+
+- An OpenClaw account and bot instance
+- A Trackyard API key ([get one here](https://app.trackyard.com/api-keys))
+
+---
+
+## Installation Steps
+
+<Steps>
+  <Step title="Visit ClawHub">
+    Go to [ClawHub: Trackyard Skill](https://clawhub.ai/benny-conn/trackyard)
+  </Step>
+  
+  <Step title="Click Install">
+    Click the **"Install"** button on the skill page.
+  </Step>
+  
+  <Step title="Set your API key">
+    When prompted, enter your Trackyard API key.
+    
+    Alternatively, set it as an environment variable:
+    ```bash
+    export TRACKYARD_API_KEY="your_api_key_here"
+    ```
+  </Step>
+  
+  <Step title="Verify installation">
+    Talk to your OpenClaw bot:
+    
+    "Search Trackyard for upbeat electronic music"
+    
+    If the bot responds with search results, you're all set!
+  </Step>
+</Steps>
+
+---
+
+## Alternative: CLI Installation
+
+You can also install the skill via the OpenClaw CLI:
+
+```bash
+npx skills add https://clawhub.ai/benny-conn/trackyard
+```
+
+Then configure your API key:
+
+```bash
+export TRACKYARD_API_KEY="your_api_key_here"
+```
+
+---
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Skill not found" icon="circle-xmark">
+    **Cause:** The skill URL is incorrect or ClawHub is unavailable.
+    
+    **Fix:**
+    - Verify the URL: `https://clawhub.ai/benny-conn/trackyard`
+    - Check ClawHub status
+    - Try again in a few minutes
+  </Accordion>
+  
+  <Accordion title="401 Unauthorized errors" icon="key">
+    **Cause:** Invalid or missing API key.
+    
+    **Fix:**
+    - Check that `TRACKYARD_API_KEY` is set correctly
+    - Verify the key is active at [app.trackyard.com/api-keys](https://app.trackyard.com/api-keys)
+    - Generate a new key if needed
+  </Accordion>
+  
+  <Accordion title="Skill installed but bot doesn't respond" icon="robot">
+    **Cause:** The skill may not be enabled or the bot needs to be restarted.
+    
+    **Fix:**
+    - Restart your OpenClaw bot
+    - Check that the skill is enabled in your OpenClaw settings
+    - Verify your API key is configured
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## What's Next?
+
+Once installed, you can:
+
+- **Search for music** — "Find chill lo-fi music for a coding stream"
+- **Download tracks** — "Download the second track as a 30-second clip"
+- **Automate workflows** — "Every Monday, create 3 travel videos with music"
+
+---
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Example Workflows" icon="wand-magic-sparkles" href="/openclaw/example-workflows">
+    See real-world workflow examples
+  </Card>
+  
+  <Card title="What is OpenClaw?" icon="circle-info" href="/openclaw/what-is-openclaw">
+    Learn more about OpenClaw and the Trackyard skill
+  </Card>
+  
+  <Card title="API Reference" icon="book" href="/api-reference/search">
+    See what the skill can do under the hood
+  </Card>
+  
+  <Card title="Use Cases" icon="lightbulb" href="/use-cases/social-media-content-farms">
+    Get inspired by production workflows
+  </Card>
+</CardGroup>

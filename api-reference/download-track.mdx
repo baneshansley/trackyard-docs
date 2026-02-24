@@ -244,8 +244,8 @@ See [How Trackyard Works](/core-concepts/how-trackyard-works#licensing-model) fo
   
   ```json
   {
-    "error": "Invalid API key",
-    "code": "unauthorized"
+    "error": "Unauthorized",
+    "message": "Invalid API key"
   }
   ```
 </ResponseField>
@@ -256,8 +256,7 @@ See [How Trackyard Works](/core-concepts/how-trackyard-works#licensing-model) fo
   ```json
   {
     "error": "Out of credits",
-    "code": "out_of_credits",
-    "credits_remaining": 0
+    "message": "Please top up or upgrade your plan"
   }
   ```
 </ResponseField>
@@ -267,9 +266,8 @@ See [How Trackyard Works](/core-concepts/how-trackyard-works#licensing-model) fo
   
   ```json
   {
-    "error": "Track not found",
-    "code": "track_not_found",
-    "track_id": "trk_invalid"
+    "error": "Not Found",
+    "message": "Track not found"
   }
   ```
 </ResponseField>
@@ -279,7 +277,8 @@ See [How Trackyard Works](/core-concepts/how-trackyard-works#licensing-model) fo
   
   ```json
   {
-    "error": "hit_point_seconds requires duration_seconds",
+    "error": "Bad Request",
+    "message": "hit_point_seconds requires duration_seconds",
     "code": "invalid_parameters"
   }
   ```
