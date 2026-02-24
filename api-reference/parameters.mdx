@@ -39,37 +39,154 @@ Use these filters with `POST /search` to refine results.
 All filters are optional and can be combined.
 
 <ParamField path="filters.genres" type="array">
-  Array of genre strings. Tracks must match at least one.
+  Array of genre/sub-genre strings. Tracks must match at least one.
   
-  **Available genres include:**
-  - Acoustic
-  - Ambient
-  - Blues
-  - Cinematic
-  - Classical
-  - Country
-  - Electronic
-  - Folk
-  - Funk
-  - Hip Hop
-  - House
-  - Indie
-  - Jazz
-  - Latin
-  - Lo-Fi
-  - Metal
-  - Pop
-  - R&B
-  - Reggae
-  - Rock
-  - Soul
-  - Techno
-  - World
+  **Complete Genre Taxonomy:**
   
-  **Example:** `["Electronic", "Pop"]`
+  <Accordion title="Pop">
+    Afrobeats, Alternative Pop, Bedroom Pop, Contemporary Christian, Dance-Pop, Dream Pop, Electropop, Europop, Hyperpop, Indie Pop, K-pop, Pop Rock, Schlager, Synth Pop, Teen Pop, Pop Soul
+  </Accordion>
+  
+  <Accordion title="Hip Hop">
+    Alternative Hip Hop, Boom Bap, Bounce, Detroit Trap, Drift Phonk, Drill, East Coast Hip Hop, Grime, Lo-Fi Hip Hop, Old School Hip Hop, Trap, West Coast Hip Hop
+  </Accordion>
+  
+  <Accordion title="Rock">
+    Alternative Rock, Arena Rock, Electronic Rock, Folk Rock, Garage Rock, Grunge, Hard Rock, Indie Rock, Post Rock, Psychedelic Rock, Rock and roll, Rockabilly, Roots Rock, Soft Rock, Surf Rock, Stoner Rock
+  </Accordion>
+  
+  <Accordion title="Electronic">
+    Bit Music, Dark Wave, Electro, Electro Swing, Electronic Dance Music (EDM), Eurodance, Footwork, Future Bass, Hardstyle, IDM, Indietronica, Jersey Club, Melodic Techno, Midtempo Bass, Minimal Techno, Psytrance, Synthwave, Techno, Trance, Trap EDM, Vaporwave
+  </Accordion>
+  
+  <Accordion title="House">
+    Afro House, Amapiano, Ambient House, Bass House, Big Room House, Deep House, Electro House, Funky House, Future Funk, Future House, Lo-Fi House, Microhouse, Organic House, Progressive House, Slap House, Soft House, Tech House, Tribal House, Tropical House
+  </Accordion>
+  
+  <Accordion title="R&B">
+    Contemporary R&B, Motown
+  </Accordion>
+  
+  <Accordion title="Soul">
+    Gospel, Neo Soul, Smooth Soul, Soul Blues
+  </Accordion>
+  
+  <Accordion title="Funk">
+    Afro-Funk, Funk Rock, Synth Funk
+  </Accordion>
+  
+  <Accordion title="Jazz">
+    Acid Jazz, Bebop, Big Band, Classic Jazz, Contemporary Jazz, Cool Jazz, Dark Jazz, Jazz Fusion, Jazz-Funk, Latin Jazz, Ragtime, Smooth Jazz, Swing, Jazz Blues, Jazz Pop
+  </Accordion>
+  
+  <Accordion title="Folk">
+    Alternative Folk, Celtic, Contemporary Folk, Folk Pop, Indie Folk, Irish Folk, Klezmer, Polka, Folktronica, Forró
+  </Accordion>
+  
+  <Accordion title="Country">
+    Americana, Bluegrass, Contemporary Country, Country Pop, Country Rock, Traditional Country, Western, Country Folk
+  </Accordion>
+  
+  <Accordion title="Latin">
+    Bolero, Bossa Nova, Calypso, Chachachá, Corrido, Corrido Tumbado, Cumbia, Flamenco, Funk Carioca, Guaracha EDM, Latin Pop, Mambo, Mariachi, Merengue, Reggaeton, Rumba, Salsa, Samba, Son Cubano, Tango, Latin House, Latin Rock, Ranchera, Regional Mexicano, Huapango, Son Jarocho, Norteño, Dembow
+  </Accordion>
+  
+  <Accordion title="Metal">
+    Heavy Metal, Thrash Metal, Metalcore, Industrial Metal, Nu Metal, Trap Metal, Black Metal, Screamo
+  </Accordion>
+  
+  <Accordion title="Punk">
+    Pop Punk, Punk Rock, Hardcore Punk
+  </Accordion>
+  
+  <Accordion title="Reggae">
+    Dancehall, Dub, Ska
+  </Accordion>
+  
+  <Accordion title="Classical">
+    Choral, Classical Crossover, Contemporary Classical, Indian Classical, Orchestral, Orchestral Hybrid, Small Ensemble, Solo Instrumental, String Ensemble, Waltz, Modern Classical, Romantic Classical, Post-Classical, Choral Symphony, Japanese Classical, Korean Classical, Southeast Asian Classical, Medieval, Symphonic Poem, Neoclassical Dark Wave, Neoclassical New Age
+  </Accordion>
+  
+  <Accordion title="Singer-Songwriter">
+    Singer-Songwriter, Slack-Key Guitar
+  </Accordion>
+  
+  <Accordion title="Electronica">
+    Electronica
+  </Accordion>
+  
+  <Accordion title="Experimental">
+    Experimental Electronic, Experimental Hip Hop
+  </Accordion>
+  
+  <Accordion title="Acoustic">
+    Solo Guitar, Solo Piano
+  </Accordion>
+  
+  <Accordion title="Beats">
+    Beats
+  </Accordion>
+  
+  <Accordion title="Religious Music">
+    Modern Hymns, Praise & Worship
+  </Accordion>
+  
+  <Accordion title="Special Occasions">
+    Birthdays, Christmas, Drinking Songs, Funerals, Weddings
+  </Accordion>
+  
+  <Accordion title="Blues">
+    Acoustic Blues, African Blues, Blues Rock, Classic Blues, Country Blues, Delta Blues, Modern Blues
+  </Accordion>
+  
+  <Accordion title="Disco">
+    Boogie, Nu Disco
+  </Accordion>
+  
+  <Accordion title="Downtempo">
+    Balearic Beat, Chillout, Chillstep, Chillwave, Trip Hop
+  </Accordion>
+  
+  <Accordion title="Easy Listening">
+    Lounge
+  </Accordion>
+  
+  <Accordion title="Comedy">
+    Bloopers, Cartoons, Sneaky, Vaudeville
+  </Accordion>
+  
+  <Accordion title="Cinematic">
+    Action, Adventure, Beautiful, Build, Chase, Crime Scene, Drama, Filmi, Horror, Main Title, Mystery, Nostalgia, Pulses, Strange & Weird, Supernatural, Suspense, Tragedy
+  </Accordion>
+  
+  <Accordion title="Brass & Marching Band">
+    Bagpipes, Military & Historical, Oompah
+  </Accordion>
+  
+  <Accordion title="Children's Music">
+    Lullabies
+  </Accordion>
+  
+  <Accordion title="Dance">
+    Dancefloor Drum and Bass
+  </Accordion>
+  
+  <Accordion title="Fanfares">
+    Ceremonial & Olympic
+  </Accordion>
+  
+  <Accordion title="Ambient">
+    ASMR, Binaural Beats, Drone, Meditation
+  </Accordion>
+  
+  <Accordion title="World">
+    World Fusion, Mbalax, Min'yō, Huapango, Son Jarocho, Norteño
+  </Accordion>
+  
+  **Example:** `["Lo-Fi Hip Hop", "Indie Pop"]`
   
   <Info>
-    For the complete, current list of genres, see [app.trackyard.com/browse/genres](https://app.trackyard.com/browse/genres)
+    You can filter by parent genre (e.g., `"Hip Hop"`) or specific sub-genre (e.g., `"Boom Bap"`). For the live, browsable list, see [app.trackyard.com/browse/genres](https://app.trackyard.com/browse/genres)
   </Info>
 </ParamField>
 
